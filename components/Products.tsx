@@ -110,17 +110,11 @@ export default function Products() {
               initial={{ opacity: 0, y: 28 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.08, duration: 0.6, ease }}
-              className="group relative cursor-pointer overflow-hidden"
+              className="group relative cursor-pointer overflow-hidden border border-[#E5E7EB]"
               style={{ height: "390px" }}
             >
-              {/* Left accent bar */}
-              <div
-                className="absolute left-0 top-0 bottom-0 w-[3px] z-20"
-                style={{ background: p.accentColor }}
-              />
-
               {/* 3D Tyre on white background */}
-              <div className="relative bg-white flex items-center justify-center overflow-hidden pl-[3px]" style={{ height: "210px" }}>
+              <div className="relative bg-white flex items-center justify-center overflow-hidden" style={{ height: "210px" }}>
                 {p.badge && (
                   <div
                     className="absolute top-3 right-3 text-[9px] font-bold tracking-[0.18em] uppercase px-2.5 py-1 text-white z-20"
@@ -135,7 +129,7 @@ export default function Products() {
               </div>
 
               {/* Always-visible info */}
-              <div className="px-5 pt-4 pb-3 pl-6">
+              <div className="px-5 pt-4 pb-3">
                 <div className="flex items-center gap-2 mb-2.5">
                   <span
                     className="w-1.5 h-1.5 rounded-full shrink-0"
@@ -159,7 +153,7 @@ export default function Products() {
 
               {/* Sliding overlay — slides up from bottom, fixed height */}
               <div
-                className="absolute inset-x-0 bottom-0 bg-white border-t border-[#E5E7EB] px-5 pb-5 pl-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-10"
+                className="absolute inset-x-0 bottom-0 bg-white border-t border-[#E5E7EB] px-5 pb-5 translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-10"
                 style={{ transitionTimingFunction: "cubic-bezier(0.22,1,0.36,1)" }}
               >
                 <div className="pt-4 mb-3">
