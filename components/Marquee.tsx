@@ -3,38 +3,36 @@
 import { motion } from "framer-motion";
 
 const items = [
-  "Performance Tyres",
-  "All-Season Grip",
-  "Off-Road Dominance",
-  "Winter Safety",
-  "35 Years of Engineering",
-  "2 Million Tyres Sold",
+  "Performance Engineered",
   "50+ Countries",
-  "Track Tested",
+  "Precision Grip",
+  "Race-Proven Tech",
+  "2M+ Tyres Sold",
+  "All-Terrain Ready",
+  "Nano-Grip Compound",
+  "Zero Compromise",
 ];
 
 export default function Marquee() {
+  const repeated = [...items, ...items, ...items];
+
   return (
-    <div className="bg-[#CC0000] py-4 overflow-hidden border-y border-[#A30000]">
-      <div className="flex">
-        {[0, 1].map((n) => (
-          <motion.div
-            key={n}
-            animate={{ x: [0, "-100%"] }}
-            transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
-            className="flex shrink-0 items-center gap-0"
+    <div className="bg-[#CC0000] py-4 overflow-hidden select-none">
+      <motion.div
+        className="flex gap-0 whitespace-nowrap"
+        animate={{ x: ["0%", "-33.333%"] }}
+        transition={{ duration: 22, ease: "linear", repeat: Infinity }}
+      >
+        {repeated.map((item, i) => (
+          <span
+            key={i}
+            className="inline-flex items-center gap-6 px-6 text-[11px] font-bold tracking-[0.28em] uppercase text-white"
           >
-            {items.map((item, i) => (
-              <div key={i} className="flex items-center shrink-0">
-                <span className="text-[11px] font-semibold tracking-[0.22em] uppercase text-white/90 whitespace-nowrap px-8">
-                  {item}
-                </span>
-                <span className="text-white/40 text-[8px]">◆</span>
-              </div>
-            ))}
-          </motion.div>
+            {item}
+            <span className="text-white/40 text-[8px]">●</span>
+          </span>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 }
