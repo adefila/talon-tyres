@@ -15,7 +15,7 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
   const isDragging = useRef(false);
   const prevMouse = useRef({ x: 0, y: 0 });
   const velocity = useRef({ x: 0, y: 0 });
-  const rotation = useRef<{ x: number; y: number; z: number }>({ x: 0.72, y: 0.28, z: 0 });
+  const rotation = useRef<{ x: number; y: number; z: number }>({ x: 0.52, y: 0.22, z: 0 });
   const { gl } = useThree();
 
   /* Materials */
@@ -214,9 +214,12 @@ interface Props {
 export default function ConfiguratorScene({ accentColor, rimColor, rimRoughness }: Props) {
   return (
     <Canvas
-      camera={{ position: [0, 0, 3.8], fov: 40 }}
+      camera={{ position: [0, 0, 5.4], fov: 34 }}
       gl={{ antialias: true, alpha: true }}
       style={{ width: "100%", height: "100%", background: "transparent" }}
+      onCreated={({ gl }) => {
+        gl.setClearColor(0x000000, 0);
+      }}
     >
       <Lights />
       <DraggableTyre accentColor={accentColor} rimColor={rimColor} rimRoughness={rimRoughness} />

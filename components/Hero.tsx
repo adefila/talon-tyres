@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
 
-const TyreScene = dynamic(() => import("./TyreScene"), { ssr: false });
+const HeroCarAnimation = dynamic(() => import("./HeroCarAnimation"), { ssr: false });
 
 const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -58,25 +58,15 @@ export default function Hero() {
   return (
     <section className="relative min-h-screen bg-[#0A0A14] overflow-hidden pt-[72px]">
 
-      {/* ── 3D tyre canvas — right half ── */}
+      {/* ── Car animation ── */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1.4, ease }}
-        className="absolute inset-0 flex items-center justify-end pointer-events-none"
+        transition={{ duration: 1.2, ease }}
+        className="absolute inset-0 pointer-events-none"
         aria-hidden="true"
       >
-        <div className="relative w-[680px] h-[680px] lg:w-[920px] lg:h-[920px] translate-x-[6%] lg:translate-x-[2%]">
-          {/* Radial glow so dark rubber reads against dark bg */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(ellipse 68% 68% at 50% 50%, rgba(100,30,30,0.75) 0%, rgba(60,15,15,0.45) 40%, rgba(20,5,5,0.2) 65%, transparent 80%)",
-            }}
-          />
-          <TyreScene />
-        </div>
+        <HeroCarAnimation />
       </motion.div>
 
       {/* ── Gradient overlay — left text readability ── */}

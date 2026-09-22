@@ -239,7 +239,7 @@ export default function TyreConfigurator() {
             className="relative"
           >
             {/* Canvas */}
-            <div className="relative aspect-square w-full">
+            <div className="relative aspect-square w-full bg-white">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={`${activeType}-${activeRim}`}
