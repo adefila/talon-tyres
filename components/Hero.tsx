@@ -125,38 +125,40 @@ export default function Hero() {
             <motion.div variants={fadeUp} className="flex items-start gap-5 max-w-[480px]">
               <div className="w-px h-16 bg-[#CC0000] shrink-0 mt-0.5" />
               <p className="text-[17px] text-white/70 leading-relaxed">
-                We don&apos;t just sell tires — we deliver control, safety, and power at every turn. Your tires are more than rubber on the road. They&apos;re the foundation of your journey.
+                We don&apos;t just sell tires. We deliver control, safety, and power at every turn. Your tires are more than rubber on the road. They&apos;re the foundation of your journey.
               </p>
             </motion.div>
 
             {/* CTAs */}
             <motion.div variants={fadeUp} className="flex flex-wrap items-center gap-3">
-              <motion.a
-                href="#products"
-                className="group inline-flex items-center bg-[#CC0000] text-white text-[13px] font-bold tracking-[0.12em] uppercase px-8 py-4 hover:bg-white hover:text-[#CC0000] transition-colors duration-200"
-                style={{ transform: "skewX(-6deg)" }}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: "spring", stiffness: 400, damping: 20 }}
-              >
-                <span style={{ display: "inline-flex", alignItems: "center", gap: "10px", transform: "skewX(6deg)" }}>
-                  Explore Products
-                  <ArrowUpRight size={14} />
-                </span>
-              </motion.a>
-              <motion.a
-                href="#reviews"
-                className="inline-flex items-center gap-2.5 border border-white/30 text-white text-[13px] font-semibold tracking-[0.12em] uppercase px-8 py-4 hover:border-white hover:bg-white/5 transition-colors duration-200"
-                style={{ transform: "skewX(-6deg)" }}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: "spring", stiffness: 400, damping: 20 }}
-              >
-                <span style={{ display: "inline-flex", alignItems: "center", gap: "8px", transform: "skewX(6deg)" }}>
-                  <Star size={13} />
-                  Read Reviews
-                </span>
-              </motion.a>
+              <div style={{ display: "inline-block", transform: "skewX(-6deg)" }}>
+                <motion.a
+                  href="#products"
+                  className="group inline-flex items-center bg-[#CC0000] text-white text-[13px] font-bold tracking-[0.12em] uppercase px-8 py-4 hover:bg-white hover:text-[#CC0000] transition-colors duration-200"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                >
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: "10px", transform: "skewX(6deg)" }}>
+                    Explore Products
+                    <ArrowUpRight size={14} />
+                  </span>
+                </motion.a>
+              </div>
+              <div style={{ display: "inline-block", transform: "skewX(-6deg)" }}>
+                <motion.a
+                  href="#reviews"
+                  className="inline-flex items-center gap-2.5 border border-white/30 text-white text-[13px] font-semibold tracking-[0.12em] uppercase px-8 py-4 hover:border-white hover:bg-white/5 transition-colors duration-200"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                >
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: "8px", transform: "skewX(6deg)" }}>
+                    <Star size={13} />
+                    Read Reviews
+                  </span>
+                </motion.a>
+              </div>
             </motion.div>
           </motion.div>
         </div>

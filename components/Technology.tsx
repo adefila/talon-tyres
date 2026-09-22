@@ -161,7 +161,7 @@ export default function Technology() {
             <div className="flex items-start gap-4 mb-10">
               <div className="w-px h-14 bg-[#CC0000] shrink-0 mt-1" />
               <p className="text-[16px] text-[#6B7280] leading-relaxed">
-                Engineered with precision and forged for durability — every TALON tyre combines advanced tread technology, premium-grade materials, and smart design features tailored to every driving need.
+                Engineered with precision and forged for durability. Every TALON tyre combines advanced tread technology, premium-grade materials, and smart design features tailored to every driving need.
               </p>
             </div>
             <a

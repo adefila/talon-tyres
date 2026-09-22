@@ -206,19 +206,20 @@ export default function TyreConfigurator() {
                   {tyre.sub} · {tyre.sizes[activeSize]} · {rim.label}
                 </motion.p>
               </AnimatePresence>
-              <motion.a
-                href="#contact"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                className="inline-flex items-center bg-[#CC0000] text-white text-[11px] font-bold tracking-[0.15em] uppercase px-7 py-4 hover:bg-[#0A0A14] transition-colors duration-200"
-                style={{ transform: "skewX(-6deg)" }}
-              >
-                <span style={{ display: "inline-flex", alignItems: "center", gap: "8px", transform: "skewX(6deg)" }}>
-                  Request a Quote
-                  <ArrowUpRight size={13} />
-                </span>
-              </motion.a>
+              <div style={{ display: "inline-block", transform: "skewX(-6deg)" }}>
+                <motion.a
+                  href="#contact"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                  className="inline-flex items-center bg-[#CC0000] text-white text-[11px] font-bold tracking-[0.15em] uppercase px-7 py-4 hover:bg-[#0A0A14] transition-colors duration-200"
+                >
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: "8px", transform: "skewX(6deg)" }}>
+                    Request a Quote
+                    <ArrowUpRight size={13} />
+                  </span>
+                </motion.a>
+              </div>
             </div>
           </motion.div>
 

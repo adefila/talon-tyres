@@ -230,9 +230,13 @@ export default function Navbar() {
                 ))}
                 <a
                   href="#configure"
-                  className="mt-2 flex items-center justify-center gap-2 bg-[#0D0F1C] text-white text-[13px] font-bold tracking-[0.12em] uppercase px-6 py-3"
+                  className="mt-2 inline-flex items-center justify-center bg-[#0D0F1C] text-white text-[13px] font-bold tracking-[0.12em] uppercase px-6 py-3 hover:bg-[#CC0000] transition-colors duration-200 w-full"
+                  style={{ transform: "skewX(-6deg)" }}
                 >
-                  Build Your Set ↗
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: "8px", transform: "skewX(6deg)" }}>
+                    Build Your Set
+                    <ArrowUpRight size={13} />
+                  </span>
                 </a>
               </div>
             </motion.div>
