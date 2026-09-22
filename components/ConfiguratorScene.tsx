@@ -208,8 +208,8 @@ export default function ConfiguratorScene({ accentColor, rimColor, rimRoughness 
   return (
     <Canvas
       camera={{ position: [0, 0, 3.8], fov: 40 }}
-      gl={{ antialias: true, alpha: true }}
-      style={{ width: "100%", height: "100%", background: "transparent" }}
+      gl={{ antialias: true, alpha: false }}
+      style={{ width: "100%", height: "100%", background: "#3a3a4a" }}
     >
       <Lights />
       <DraggableTyre accentColor={accentColor} rimColor={rimColor} rimRoughness={rimRoughness} />

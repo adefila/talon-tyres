@@ -36,15 +36,15 @@ function Tyre3D() {
 
   /* Shared materials */
   const rubber = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: "#0e0e12", roughness: 0.95, metalness: 0.02 }),
+    () => new THREE.MeshStandardMaterial({ color: "#2a2a36", roughness: 0.92, metalness: 0.04, emissive: "#111118", emissiveIntensity: 0.4 }),
     []
   );
   const rim = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: "#28283a", roughness: 0.22, metalness: 0.88 }),
+    () => new THREE.MeshStandardMaterial({ color: "#484860", roughness: 0.18, metalness: 0.92 }),
     []
   );
   const spoke = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: "#303048", roughness: 0.18, metalness: 0.92 }),
+    () => new THREE.MeshStandardMaterial({ color: "#505068", roughness: 0.14, metalness: 0.95 }),
     []
   );
   const hub = useMemo(

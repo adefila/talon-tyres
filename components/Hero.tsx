@@ -72,7 +72,7 @@ export default function Hero() {
             className="absolute inset-0 pointer-events-none"
             style={{
               background:
-                "radial-gradient(ellipse 62% 62% at 50% 50%, rgba(60,20,20,0.55) 0%, rgba(30,10,10,0.25) 45%, transparent 72%)",
+                "radial-gradient(ellipse 68% 68% at 50% 50%, rgba(100,30,30,0.75) 0%, rgba(60,15,15,0.45) 40%, rgba(20,5,5,0.2) 65%, transparent 80%)",
             }}
           />
           <TyreScene />
