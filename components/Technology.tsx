@@ -161,7 +161,7 @@ export default function Technology() {
             <div className="flex items-start gap-4 mb-10">
               <div className="w-px h-14 bg-[#CC0000] shrink-0 mt-1" />
               <p className="text-[16px] text-[#6B7280] leading-relaxed">
-                Every TALON tyre is born in our R&amp;D facility where material scientists and racing engineers collaborate — pushing what rubber, steel, and physics can achieve together.
+                Engineered with precision and forged for durability — every TALON tyre combines advanced tread technology, premium-grade materials, and smart design features tailored to every driving need.
               </p>
             </div>
             <a

@@ -125,9 +125,7 @@ export default function Hero() {
             <motion.div variants={fadeUp} className="flex items-start gap-5 max-w-[480px]">
               <div className="w-px h-16 bg-[#CC0000] shrink-0 mt-0.5" />
               <p className="text-[17px] text-white/70 leading-relaxed">
-                Experience power, control, and safety with every mile. TALON tyres
-                are crafted for the road ahead — whether it&apos;s a daily
-                commute or a rugged expedition.
+                We don&apos;t just sell tires — we deliver control, safety, and power at every turn. Your tires are more than rubber on the road. They&apos;re the foundation of your journey.
               </p>
             </motion.div>
 

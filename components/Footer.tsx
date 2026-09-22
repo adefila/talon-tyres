@@ -80,7 +80,7 @@ export default function Footer() {
               <TalonLogo color="white" className="h-[26px] w-auto" />
             </div>
             <p className="text-[16px] text-white/40 leading-relaxed max-w-xs mb-8">
-              Engineered for every turn. TALON precision-crafted tyres are trusted by performance drivers, fleet operators, and weekend warriors across 50+ countries.
+              Driven by innovation, tested for strength, and trusted for reliability. TALON is the tire brand for drivers who demand more from every journey.
             </p>
 
             <div className="flex items-center gap-3">
