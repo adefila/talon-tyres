@@ -137,10 +137,10 @@ export default function CtaBanner() {
               {/* Submit */}
               <button
                 type="submit"
-                className="group inline-flex items-center justify-between bg-white text-[#CC0000] text-[11px] font-bold tracking-[0.18em] uppercase px-7 py-4 hover:bg-[#0D0F1C] hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#CC0000] focus:ring-white"
+                className="group flex items-center justify-between w-full bg-white text-[#CC0000] text-[11px] font-bold tracking-[0.18em] uppercase px-7 py-4 hover:bg-[#0D0F1C] hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#CC0000] focus:ring-white"
                 style={{ transform: "skewX(-6deg)" }}
               >
-                <span style={{ display: "inline-flex", alignItems: "center", gap: "8px", transform: "skewX(6deg)" }}>
+                <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", transform: "skewX(6deg)" }}>
                   Send Message
                   <ArrowUpRight size={13} />
                 </span>

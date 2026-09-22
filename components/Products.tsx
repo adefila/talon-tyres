@@ -110,7 +110,7 @@ export default function Products() {
               initial={{ opacity: 0, y: 28 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.08, duration: 0.6, ease }}
-              className="group relative border border-[#E5E7EB] hover:border-[#D1D5DB] transition-colors duration-300 cursor-pointer overflow-hidden"
+              className="group relative cursor-pointer overflow-hidden"
               style={{ height: "390px" }}
             >
               {/* Left accent bar */}
