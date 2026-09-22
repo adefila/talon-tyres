@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo, useEffect, type ReactElement } from "react";
+import { useRef, useMemo, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -10,150 +10,127 @@ interface TyreProps {
   rimRoughness: number;
 }
 
+/* ─────────────────────────────────────────
+   Realistic car-tyre cross-section profile
+   Revolves around Y; mesh rotated [PI/2,0,0]
+   so the axle points along World Z.
+───────────────────────────────────────── */
+function buildTyreProfile(): THREE.Vector2[] {
+  return [
+    new THREE.Vector2(0.952, -0.495),
+    new THREE.Vector2(0.968, -0.442),
+    new THREE.Vector2(1.018, -0.432),
+    new THREE.Vector2(1.085, -0.458),
+    new THREE.Vector2(1.195, -0.468),
+    new THREE.Vector2(1.328, -0.464),
+    new THREE.Vector2(1.418, -0.428),
+    new THREE.Vector2(1.458, -0.356),
+    new THREE.Vector2(1.473, -0.254),
+    new THREE.Vector2(1.480, -0.136),
+    new THREE.Vector2(1.482, -0.038),
+    new THREE.Vector2(1.482,  0.000),
+    new THREE.Vector2(1.482,  0.038),
+    new THREE.Vector2(1.480,  0.136),
+    new THREE.Vector2(1.473,  0.254),
+    new THREE.Vector2(1.458,  0.356),
+    new THREE.Vector2(1.418,  0.428),
+    new THREE.Vector2(1.328,  0.464),
+    new THREE.Vector2(1.195,  0.468),
+    new THREE.Vector2(1.085,  0.458),
+    new THREE.Vector2(1.018,  0.432),
+    new THREE.Vector2(0.968,  0.442),
+    new THREE.Vector2(0.952,  0.495),
+  ];
+}
+
+/* ─────────────────────────────────────────
+   Trapezoidal spoke shape (wide at rim,
+   narrow at hub) for ExtrudeGeometry.
+   Shape lives in XY plane; extrude along Z.
+───────────────────────────────────────── */
+function buildSpokeShape(): THREE.Shape {
+  const s = new THREE.Shape();
+  const hubY = 0.200, hubX = 0.036;
+  const rimY = 0.918, rimX = 0.092;
+  const cp1X = 0.058, cp1Y = 0.520; // control point for left curve
+  const cp2X = 0.058, cp2Y = 0.520; // control point for right curve
+
+  s.moveTo(-hubX, hubY);
+  s.quadraticCurveTo(-cp1X, cp1Y, -rimX, rimY);
+  s.lineTo(rimX, rimY);
+  s.quadraticCurveTo(cp2X, cp2Y, hubX, hubY);
+  s.closePath();
+  return s;
+}
+
 function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
   const groupRef = useRef<THREE.Group>(null!);
   const isDragging = useRef(false);
   const prevMouse = useRef({ x: 0, y: 0 });
   const velocity = useRef({ x: 0, y: 0 });
-  const rot = useRef({ x: 0.42, y: 0.0 });
+  const rot = useRef({ x: 0.40, y: 0.0 });
   const { gl } = useThree();
 
   /* ── Materials ── */
   const rubber = useMemo(() => new THREE.MeshStandardMaterial({
-    color: "#0c0c12",
-    roughness: 0.92,
-    metalness: 0.0,
-    emissive: "#050508",
-    emissiveIntensity: 0.05,
+    color: "#0a0a10", roughness: 0.93, metalness: 0.0,
+    emissive: "#040408", emissiveIntensity: 0.06,
   }), []);
 
   const grooveMat = useMemo(() => new THREE.MeshStandardMaterial({
-    color: "#040406",
-    roughness: 0.99,
-    metalness: 0,
+    color: "#030305", roughness: 1.0, metalness: 0,
   }), []);
 
-  // Dark painted rim body (barrel, hub, background)
-  const rimBodyMat = useMemo(() => new THREE.MeshStandardMaterial({
-    color: "#18181f",
-    roughness: 0.28,
-    metalness: 0.82,
+  // Dark painted rim body — barrel, hub background, between-spoke fill
+  const rimDark = useMemo(() => new THREE.MeshStandardMaterial({
+    color: "#141418", roughness: 0.22, metalness: 0.88,
   }), []);
 
-  // Machined/polished spoke faces (user-selectable finish)
+  // Machined/polished spoke face — driven by rimColor prop
   const spokeMat = useMemo(() => new THREE.MeshStandardMaterial({
     color: rimColor,
     roughness: rimRoughness,
-    metalness: rimRoughness < 0.4 ? 0.94 : 0.55,
-    envMapIntensity: 1.2,
+    metalness: rimRoughness < 0.45 ? 0.96 : 0.58,
+    envMapIntensity: 1.4,
   }), [rimColor, rimRoughness]);
 
   const accentMat = useMemo(() => new THREE.MeshStandardMaterial({
-    color: accentColor,
-    roughness: 0.40,
-    metalness: 0.30,
-    emissive: accentColor,
-    emissiveIntensity: 0.50,
+    color: accentColor, roughness: 0.42, metalness: 0.28,
+    emissive: accentColor, emissiveIntensity: 0.52,
   }), [accentColor]);
 
   const lugMat = useMemo(() => new THREE.MeshStandardMaterial({
-    color: "#2a2a38",
-    roughness: 0.45,
-    metalness: 0.80,
+    color: "#28282e", roughness: 0.42, metalness: 0.82,
   }), []);
 
-  /* ── Tyre profile: realistic car tyre cross-section
-     Revolves around Y; mesh is rotated [Math.PI/2,0,0] so axle = Z.
-     Points: (radius, halfWidth)  ── */
-  const tyreProfile = useMemo<THREE.Vector2[]>(() => [
-    new THREE.Vector2(0.955, -0.495),  // bead seat inner lip
-    new THREE.Vector2(0.970, -0.440),  // bead seat outer
-    new THREE.Vector2(1.020, -0.430),  // sidewall base
-    new THREE.Vector2(1.090, -0.460),  // lower sidewall subtle bulge
-    new THREE.Vector2(1.200, -0.470),  // mid-lower sidewall
-    new THREE.Vector2(1.330, -0.465),  // mid sidewall (max bulge)
-    new THREE.Vector2(1.420, -0.430),  // upper sidewall taper
-    new THREE.Vector2(1.460, -0.360),  // shoulder lead-in
-    new THREE.Vector2(1.475, -0.260),  // shoulder
-    new THREE.Vector2(1.482, -0.140),  // outer tread edge
-    new THREE.Vector2(1.484, -0.040),  // tread flat
-    new THREE.Vector2(1.484,  0.000),  // tread centre
-    new THREE.Vector2(1.484,  0.040),  // tread flat
-    new THREE.Vector2(1.482,  0.140),  // outer tread edge
-    new THREE.Vector2(1.475,  0.260),  // shoulder
-    new THREE.Vector2(1.460,  0.360),  // shoulder lead-in
-    new THREE.Vector2(1.420,  0.430),  // upper sidewall taper
-    new THREE.Vector2(1.330,  0.465),  // mid sidewall
-    new THREE.Vector2(1.200,  0.470),  // mid-lower sidewall
-    new THREE.Vector2(1.090,  0.460),  // lower sidewall bulge
-    new THREE.Vector2(1.020,  0.430),  // sidewall base
-    new THREE.Vector2(0.970,  0.440),  // bead seat outer
-    new THREE.Vector2(0.955,  0.495),  // bead seat inner lip
-  ], []);
+  /* ── Geometry (memoised) ── */
+  const tyreProfile = useMemo(buildTyreProfile, []);
 
-  /* ── 5 circumferential tread grooves (matching reference image) ── */
-  const treadGrooves = useMemo<ReactElement[]>(() => {
-    const grooveZ = [-0.30, -0.14, 0.00, 0.14, 0.30];
-    return grooveZ.map((z, i) => (
-      <mesh key={i} position={[0, 0, z]} material={grooveMat}>
-        <torusGeometry args={[1.473, 0.034, 10, 96]} />
-      </mesh>
-    ));
-  }, [grooveMat]);
+  // ExtrudeGeometry spoke — proper tapered shape
+  const spokeGeo = useMemo(() => {
+    const shape = buildSpokeShape();
+    return new THREE.ExtrudeGeometry(shape, {
+      depth: 0.210,
+      bevelEnabled: true,
+      bevelSize: 0.007,
+      bevelThickness: 0.007,
+      bevelSegments: 3,
+    });
+  }, []);
 
-  /* ── 10 spokes in 5 Y-pairs — BMW/luxury multi-spoke style ──
-     Each pair has two slim spokes ±offset from pair centre.
-     Spokes are boxes in the XY plane of the group (which is the wheel face). */
-  const spokes = useMemo<ReactElement[]>(() => {
-    const out: ReactElement[] = [];
-    const PAIRS = 5;
-    const OFFSET = 0.105; // radians between twins in a pair
-
-    for (let i = 0; i < PAIRS; i++) {
-      const baseAngle = (i / PAIRS) * Math.PI * 2;
-
-      for (const sideOffset of [-OFFSET, OFFSET]) {
-        const a = baseAngle + sideOffset;
-        out.push(
-          <group key={`s-${i}-${sideOffset}`} rotation={[0, 0, a]}>
-            {/* Slim inner spoke body */}
-            <mesh position={[0, 0.50, 0]} material={spokeMat}>
-              <boxGeometry args={[0.082, 0.68, 0.195]} />
-            </mesh>
-            {/* Wider outer connector near rim barrel */}
-            <mesh position={[0, 0.865, 0]} material={spokeMat}>
-              <boxGeometry args={[0.130, 0.185, 0.240]} />
-            </mesh>
-            {/* Tapered inner end near hub */}
-            <mesh position={[0, 0.255, 0]} material={spokeMat}>
-              <boxGeometry args={[0.068, 0.175, 0.160]} />
-            </mesh>
-          </group>
-        );
-      }
-    }
-    return out;
-  }, [spokeMat]);
-
-  /* ── 5 lug bolts per face ── */
-  const lugBolts = useMemo<ReactElement[]>(() => {
-    const bolts: ReactElement[] = [];
-    const LUG_R = 0.660;
-    const cylRot: [number, number, number] = [Math.PI / 2, 0, 0];
+  // 10 spoke angles: 5 Y-pairs at ±0.098 rad offset per pair
+  const spokeAngles = useMemo(() => {
+    const angles: number[] = [];
     for (let i = 0; i < 5; i++) {
-      const a = (i / 5) * Math.PI * 2;
-      const x = Math.cos(a) * LUG_R;
-      const y = Math.sin(a) * LUG_R;
-      for (const z of [0.505, -0.505]) {
-        bolts.push(
-          <mesh key={`lug-${i}-${z}`} position={[x, y, z]} rotation={cylRot} material={lugMat}>
-            <cylinderGeometry args={[0.058, 0.058, 0.06, 10]} />
-          </mesh>
-        );
-      }
+      const base = (i / 5) * Math.PI * 2;
+      angles.push(base - 0.098, base + 0.098);
     }
-    return bolts;
-  }, [lugMat]);
+    return angles;
+  }, []);
+
+  // Lug bolt angles (5-bolt pattern)
+  const lugAngles = useMemo(() =>
+    Array.from({ length: 5 }, (_, i) => (i / 5) * Math.PI * 2), []);
 
   /* ── Drag interaction ── */
   useEffect(() => {
@@ -200,6 +177,8 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
   });
 
   const cylRot: [number, number, number] = [Math.PI / 2, 0, 0];
+  const WHEEL_DEPTH = 0.210; // extrusion depth of spoke
+  const HALF_DEPTH = WHEEL_DEPTH / 2;
 
   return (
     <group ref={groupRef} scale={[0.80, 0.80, 0.80]}>
@@ -209,63 +188,80 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
         <latheGeometry args={[tyreProfile, 96]} />
       </mesh>
 
-      {/* Circumferential tread grooves (5 grooves = 4 central ribs + 2 shoulder) */}
-      {treadGrooves}
+      {/* ── 5 circumferential tread grooves ── */}
+      {([-0.30, -0.14, 0.00, 0.14, 0.30] as number[]).map((z, i) => (
+        <mesh key={`groove-${i}`} position={[0, 0, z]} material={grooveMat}>
+          <torusGeometry args={[1.471, 0.033, 10, 96]} />
+        </mesh>
+      ))}
 
-      {/* Sidewall accent rings */}
-      <mesh material={accentMat} position={[0, 0, 0.475]}>
-        <torusGeometry args={[1.025, 0.022, 14, 96]} />
-      </mesh>
-      <mesh material={accentMat} position={[0, 0, -0.475]}>
-        <torusGeometry args={[1.025, 0.022, 14, 96]} />
-      </mesh>
+      {/* ── Sidewall accent colour rings ── */}
+      {([0.472, -0.472] as number[]).map((z, i) => (
+        <mesh key={`sw-${i}`} position={[0, 0, z]} material={accentMat}>
+          <torusGeometry args={[1.022, 0.020, 14, 96]} />
+        </mesh>
+      ))}
 
-      {/* ── Rim barrel (dark painted, open cylinder) ── */}
-      <mesh material={rimBodyMat} rotation={cylRot}>
-        <cylinderGeometry args={[0.948, 0.948, 0.945, 64, 1, true]} />
-      </mesh>
-
-      {/* Rim barrel inner lip (thickens the edge) */}
-      <mesh material={rimBodyMat} position={[0, 0, 0.470]} rotation={cylRot}>
-        <cylinderGeometry args={[0.960, 0.935, 0.025, 64]} />
-      </mesh>
-      <mesh material={rimBodyMat} position={[0, 0, -0.470]} rotation={cylRot}>
-        <cylinderGeometry args={[0.960, 0.935, 0.025, 64]} />
+      {/* ── Rim outer barrel (dark painted open cylinder) ── */}
+      <mesh material={rimDark} rotation={cylRot}>
+        <cylinderGeometry args={[0.945, 0.945, 0.940, 64, 1, true]} />
       </mesh>
 
-      {/* Dark rim face background disc (behind spokes) */}
-      <mesh material={rimBodyMat} position={[0, 0, 0.460]} rotation={cylRot}>
-        <cylinderGeometry args={[0.930, 0.180, 0.010, 64]} />
-      </mesh>
-      <mesh material={rimBodyMat} position={[0, 0, -0.460]} rotation={cylRot}>
-        <cylinderGeometry args={[0.930, 0.180, 0.010, 64]} />
+      {/* ── Rim barrel lip flanges (tyre bead ledge) ── */}
+      {([0.470, -0.470] as number[]).map((z, i) => (
+        <mesh key={`lip-${i}`} material={rimDark} position={[0, 0, z]} rotation={cylRot}>
+          <cylinderGeometry args={[0.958, 0.958, 0.022, 64]} />
+        </mesh>
+      ))}
+
+      {/* ── Dark face background discs (flat cylinders, same radius top/bottom) ── */}
+      {([0.460, -0.460] as number[]).map((z, i) => (
+        <mesh key={`face-${i}`} material={rimDark} position={[0, 0, z]} rotation={cylRot}>
+          <cylinderGeometry args={[0.930, 0.930, 0.008, 64]} />
+        </mesh>
+      ))}
+
+      {/* ── 10 tapered Y-spokes (ExtrudeGeometry) ── */}
+      {spokeAngles.map((angle, i) => (
+        <mesh
+          key={`spoke-${i}`}
+          rotation={[0, 0, angle]}
+          position={[0, 0, -HALF_DEPTH]}
+          material={spokeMat}
+          geometry={spokeGeo}
+        />
+      ))}
+
+      {/* ── Hub cylinder (dark painted) ── */}
+      <mesh material={rimDark} rotation={cylRot}>
+        <cylinderGeometry args={[0.195, 0.195, 1.005, 36]} />
       </mesh>
 
-      {/* ── 10 machined spokes (5 Y-pairs) ── */}
-      {spokes}
+      {/* ── Hub face caps (accent colour disc each side) ── */}
+      {([0.508, -0.508] as number[]).map((z, i) => (
+        <mesh key={`cap-${i}`} material={accentMat} position={[0, 0, z]} rotation={cylRot}>
+          <cylinderGeometry args={[0.162, 0.162, 0.024, 32]} />
+        </mesh>
+      ))}
+      {/* Centre nub */}
+      {([0.520, -0.520] as number[]).map((z, i) => (
+        <mesh key={`nub-${i}`} material={accentMat} position={[0, 0, z]} rotation={cylRot}>
+          <cylinderGeometry args={[0.062, 0.062, 0.014, 20]} />
+        </mesh>
+      ))}
 
-      {/* ── Lug bolts (5 per face) ── */}
-      {lugBolts}
-
-      {/* Hub cylinder (dark) */}
-      <mesh material={rimBodyMat} rotation={cylRot}>
-        <cylinderGeometry args={[0.190, 0.190, 1.02, 36]} />
-      </mesh>
-
-      {/* Hub caps — flat discs (accent brand colour) */}
-      <mesh material={accentMat} position={[0, 0, 0.515]} rotation={cylRot}>
-        <cylinderGeometry args={[0.165, 0.165, 0.025, 32]} />
-      </mesh>
-      <mesh material={accentMat} position={[0, 0, -0.515]} rotation={cylRot}>
-        <cylinderGeometry args={[0.165, 0.165, 0.025, 32]} />
-      </mesh>
-      {/* Small centre logo nub */}
-      <mesh material={accentMat} position={[0, 0, 0.528]} rotation={cylRot}>
-        <cylinderGeometry args={[0.065, 0.065, 0.012, 20]} />
-      </mesh>
-      <mesh material={accentMat} position={[0, 0, -0.528]} rotation={cylRot}>
-        <cylinderGeometry args={[0.065, 0.065, 0.012, 20]} />
-      </mesh>
+      {/* ── 5 lug bolts per face ── */}
+      {lugAngles.map((a, i) => {
+        const lx = Math.cos(a) * 0.645;
+        const ly = Math.sin(a) * 0.645;
+        return (
+          [0.505, -0.505] as number[]
+        ).map((z, j) => (
+          <mesh key={`lug-${i}-${j}`} position={[lx, ly, z]} rotation={cylRot} material={lugMat}>
+            <cylinderGeometry args={[0.056, 0.056, 0.058, 10]} />
+          </mesh>
+        ));
+      })}
 
     </group>
   );
@@ -274,20 +270,14 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
 function Lights({ accentColor }: { accentColor: string }) {
   return (
     <>
-      <ambientLight intensity={0.30} color="#eef0ff" />
-      {/* Main key light — top-right-front */}
-      <directionalLight position={[5, 8, 6]} intensity={3.8} color="#ffffff" />
-      {/* Fill light — left */}
-      <directionalLight position={[-5, 2, 4]} intensity={0.75} color="#d0e0ff" />
-      {/* Under fill */}
-      <directionalLight position={[1, -4, 3]} intensity={0.40} color="#c8d8ff" />
-      {/* Back accent glow — accent colour */}
-      <pointLight position={[0, 0, -7]} intensity={4.0} color={accentColor} distance={16} />
-      {/* Side rim highlights */}
-      <pointLight position={[-7, 1, 0]} intensity={2.2} color="#b8ccff" distance={14} />
-      <pointLight position={[7, 1, 0]} intensity={1.8} color="#ffffff" distance={14} />
-      {/* Top overhead */}
-      <pointLight position={[0, 6, 5]} intensity={1.4} color="#ffffff" distance={14} />
+      <ambientLight intensity={0.28} color="#eef0ff" />
+      <directionalLight position={[5, 8, 6]}    intensity={3.8} color="#ffffff" />
+      <directionalLight position={[-5, 2, 4]}   intensity={0.78} color="#d0e0ff" />
+      <directionalLight position={[1, -4, 3]}   intensity={0.42} color="#c8d8ff" />
+      <pointLight position={[0, 0, -7]}   intensity={4.0} color={accentColor} distance={16} />
+      <pointLight position={[-7, 1, 0]}   intensity={2.4} color="#b8ccff"    distance={14} />
+      <pointLight position={[7, 1, 0]}    intensity={1.9} color="#ffffff"    distance={14} />
+      <pointLight position={[0, 6, 5]}    intensity={1.5} color="#ffffff"    distance={14} />
     </>
   );
 }
