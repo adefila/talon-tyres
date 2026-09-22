@@ -9,8 +9,27 @@ const footerLinks = {
 
 export default function Footer() {
   return (
-    <footer className="bg-[#0A0A14] text-white">
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-12 pt-20 pb-10">
+    <footer className="bg-[#0A0A14] text-white relative overflow-hidden">
+
+      {/* ── Watermark logo — blended into the background ── */}
+      <div
+        className="absolute inset-x-0 bottom-0 flex items-end justify-center pointer-events-none select-none"
+        aria-hidden="true"
+      >
+        <span
+          className="font-black italic tracking-[-0.04em] text-white leading-none"
+          style={{
+            fontSize: "clamp(120px, 22vw, 320px)",
+            opacity: 0.032,
+            lineHeight: 0.85,
+            letterSpacing: "-0.04em",
+          }}
+        >
+          TALON
+        </span>
+      </div>
+
+      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 pt-20 pb-10">
         {/* Top */}
         <div className="grid lg:grid-cols-5 gap-12 mb-16">
           {/* Brand */}
@@ -29,6 +48,7 @@ export default function Footer() {
                 <a
                   key={s}
                   href="#"
+                  aria-label={s}
                   className="w-9 h-9 border border-white/10 flex items-center justify-center text-[11px] font-bold text-white/40 hover:border-[#CC0000] hover:text-[#CC0000] transition-colors"
                 >
                   {s}
