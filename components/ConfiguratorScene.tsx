@@ -15,72 +15,93 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
   const isDragging = useRef(false);
   const prevMouse = useRef({ x: 0, y: 0 });
   const velocity = useRef({ x: 0, y: 0 });
-  const rotation = useRef<{ x: number; y: number; z: number }>({ x: 0.52, y: 0.22, z: 0 });
+  // Start at a nice 3/4 angle: slight X tilt, Y at 0 for turntable start
+  const rot = useRef({ x: 0.38, y: 0.0 });
   const { gl } = useThree();
 
-  /* Materials */
-  const rubber = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: "#0c0c10", roughness: 0.95, metalness: 0.02 }),
-    []
-  );
-  const rimMat = useMemo(
-    () =>
-      new THREE.MeshStandardMaterial({
-        color: rimColor,
-        roughness: rimRoughness,
-        metalness: rimRoughness < 0.4 ? 0.92 : 0.5,
-      }),
-    [rimColor, rimRoughness]
-  );
-  const spokeMat = useMemo(
-    () =>
-      new THREE.MeshStandardMaterial({
-        color: rimColor,
-        roughness: rimRoughness + 0.05,
-        metalness: rimRoughness < 0.4 ? 0.88 : 0.45,
-      }),
-    [rimColor, rimRoughness]
-  );
-  const accentMat = useMemo(
-    () =>
-      new THREE.MeshStandardMaterial({
-        color: accentColor,
-        roughness: 0.4,
-        metalness: 0.3,
-        emissive: accentColor,
-        emissiveIntensity: 0.25,
-      }),
-    [accentColor]
-  );
+  /* ── Materials ── */
+  const rubber = useMemo(() => new THREE.MeshStandardMaterial({
+    color: "#222232",
+    roughness: 0.90,
+    metalness: 0.03,
+    emissive: "#0a0a14",
+    emissiveIntensity: 0.08,
+  }), []);
 
-  /* Tread blocks */
-  const treadBlocks = useMemo(() => {
+  const rimMat = useMemo(() => new THREE.MeshStandardMaterial({
+    color: rimColor,
+    roughness: rimRoughness,
+    metalness: rimRoughness < 0.4 ? 0.94 : 0.52,
+    envMapIntensity: 1.2,
+  }), [rimColor, rimRoughness]);
+
+  const spokeMat = useMemo(() => new THREE.MeshStandardMaterial({
+    color: rimColor,
+    roughness: Math.max(rimRoughness - 0.05, 0.08),
+    metalness: rimRoughness < 0.4 ? 0.92 : 0.48,
+  }), [rimColor, rimRoughness]);
+
+  const accentMat = useMemo(() => new THREE.MeshStandardMaterial({
+    color: accentColor,
+    roughness: 0.35,
+    metalness: 0.35,
+    emissive: accentColor,
+    emissiveIntensity: 0.55,
+  }), [accentColor]);
+
+  /* ── Tread blocks ── */
+  const treadBlocks = useMemo<ReactElement[]>(() => {
     const blocks: ReactElement[] = [];
-    const count = 30;
+    const count = 36;
     const R = 1.44;
     for (let i = 0; i < count; i++) {
       const angle = (i / count) * Math.PI * 2;
+      const isMain = i % 2 === 0;
       blocks.push(
-        <mesh key={`t${i}`} position={[Math.cos(angle) * R, Math.sin(angle) * R, 0]} rotation={[0, 0, angle]} material={rubber}>
-          <boxGeometry args={[0.19, 0.30, 0.62]} />
+        <mesh
+          key={`t${i}`}
+          position={[Math.cos(angle) * R, Math.sin(angle) * R, 0]}
+          rotation={[0, 0, angle]}
+          material={rubber}
+        >
+          <boxGeometry args={isMain ? [0.20, 0.32, 0.60] : [0.14, 0.22, 0.60]} />
         </mesh>
       );
+      // Offset stagger blocks on one side
+      if (isMain) {
+        blocks.push(
+          <mesh
+            key={`ts${i}`}
+            position={[Math.cos(angle) * R * 0.985, Math.sin(angle) * R * 0.985, 0.22]}
+            rotation={[0, 0, angle]}
+            material={rubber}
+          >
+            <boxGeometry args={[0.11, 0.18, 0.12]} />
+          </mesh>
+        );
+      }
     }
     return blocks;
   }, [rubber]);
 
-  /* Spokes */
-  const spokes = useMemo(() => {
+  /* ── 5 Spokes ── */
+  const spokes = useMemo<ReactElement[]>(() => {
     const arms: ReactElement[] = [];
     for (let i = 0; i < 5; i++) {
       const angle = (i / 5) * Math.PI * 2;
       arms.push(
         <group key={i} rotation={[0, 0, angle]}>
-          <mesh position={[0, 0.52, 0]} material={spokeMat}>
-            <boxGeometry args={[0.10, 0.82, 0.20]} />
+          {/* Main arm */}
+          <mesh position={[0, 0.50, 0]} material={spokeMat}>
+            <boxGeometry args={[0.11, 0.80, 0.22]} />
           </mesh>
-          <mesh position={[0, 0.87, 0]} material={rimMat}>
-            <boxGeometry args={[0.16, 0.22, 0.26]} />
+          {/* Rim junction */}
+          <mesh position={[0, 0.86, 0]} material={rimMat}>
+            <boxGeometry args={[0.17, 0.24, 0.28]} />
+          </mesh>
+          {/* Inner bridge */}
+          <mesh position={[0, 0.24, 0]} material={spokeMat}>
+            <boxGeometry args={[0.08, 0.22, 0.18]} />
           </mesh>
         </group>
       );
@@ -88,7 +109,7 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
     return arms;
   }, [spokeMat, rimMat]);
 
-  /* Pointer drag handlers */
+  /* ── Drag handlers ── */
   useEffect(() => {
     const canvas = gl.domElement;
     const down = (e: PointerEvent) => {
@@ -101,9 +122,10 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
       if (!isDragging.current) return;
       const dx = e.clientX - prevMouse.current.x;
       const dy = e.clientY - prevMouse.current.y;
-      velocity.current = { x: dy * 0.008, y: dx * 0.008 };
-      rotation.current.x += dy * 0.008;
-      rotation.current.z += dx * 0.008;
+      // dx → Y axis (left/right turntable), dy → X axis (up/down tilt)
+      velocity.current = { x: dy * 0.009, y: dx * 0.009 };
+      rot.current.x += dy * 0.009;
+      rot.current.y += dx * 0.009;
       prevMouse.current = { x: e.clientX, y: e.clientY };
     };
     const up = () => {
@@ -124,83 +146,107 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
   useFrame((_, delta) => {
     if (!groupRef.current) return;
     if (!isDragging.current) {
-      /* Slow auto-rotate when idle */
-      rotation.current.z += delta * 0.22;
-      /* Decay velocity */
-      velocity.current.x *= 0.94;
-      velocity.current.y *= 0.94;
-      rotation.current.x += velocity.current.x;
-      rotation.current.z += velocity.current.y;
+      // Slow turntable on Y — reveals tyre profile, rim, and tread
+      rot.current.y += delta * 0.28;
+      velocity.current.x *= 0.92;
+      velocity.current.y *= 0.92;
+      rot.current.x += velocity.current.x;
+      rot.current.y += velocity.current.y;
     }
-    groupRef.current.rotation.x = rotation.current.x;
-    groupRef.current.rotation.y = rotation.current.y;
-    groupRef.current.rotation.z = rotation.current.z;
+    groupRef.current.rotation.x = rot.current.x;
+    groupRef.current.rotation.y = rot.current.y;
+    groupRef.current.rotation.z = 0;
   });
 
   const cylRot: [number, number, number] = [Math.PI / 2, 0, 0];
 
   return (
-    <group ref={groupRef}>
-      {/* Outer tyre */}
+    // Scale down so tyre never clips at any rotation angle
+    <group ref={groupRef} scale={[0.66, 0.66, 0.66]}>
+      {/* Outer tyre body (torus) */}
       <mesh material={rubber}>
         <torusGeometry args={[1.44, 0.50, 32, 96]} />
       </mesh>
+
+      {/* Tread blocks */}
       {treadBlocks}
-      {/* Sidewall */}
+
+      {/* Sidewall inner surface */}
       <mesh material={rubber} rotation={cylRot}>
         <cylinderGeometry args={[0.96, 0.96, 1.02, 64, 1, true]} />
       </mesh>
-      {/* Accent rings */}
+
+      {/* Accent rings (sidewall colour stripe) */}
       <mesh material={accentMat} position={[0, 0, 0.50]}>
-        <torusGeometry args={[0.955, 0.028, 16, 96]} />
+        <torusGeometry args={[0.955, 0.030, 16, 96]} />
       </mesh>
       <mesh material={accentMat} position={[0, 0, -0.50]}>
-        <torusGeometry args={[0.955, 0.028, 16, 96]} />
+        <torusGeometry args={[0.955, 0.030, 16, 96]} />
       </mesh>
+      {/* Inner accent ring */}
+      <mesh material={accentMat} position={[0, 0, 0.50]}>
+        <torusGeometry args={[0.72, 0.012, 12, 96]} />
+      </mesh>
+      <mesh material={accentMat} position={[0, 0, -0.50]}>
+        <torusGeometry args={[0.72, 0.012, 12, 96]} />
+      </mesh>
+
       {/* Rim barrel */}
       <mesh material={rimMat} rotation={cylRot}>
         <cylinderGeometry args={[0.92, 0.92, 0.98, 64, 1, false]} />
       </mesh>
-      {/* Rim faces */}
+      {/* Rim face rings */}
       <mesh material={rimMat} position={[0, 0, 0.49]}>
         <torusGeometry args={[0.62, 0.28, 16, 64]} />
       </mesh>
       <mesh material={rimMat} position={[0, 0, -0.49]}>
         <torusGeometry args={[0.62, 0.28, 16, 64]} />
       </mesh>
+
       {/* Spokes */}
       {spokes}
-      {/* Hub */}
+
+      {/* Hub cylinder */}
       <mesh material={rimMat} rotation={cylRot}>
-        <cylinderGeometry args={[0.18, 0.18, 1.04, 32]} />
+        <cylinderGeometry args={[0.18, 0.18, 1.06, 32]} />
       </mesh>
-      <mesh material={accentMat} position={[0, 0, 0.52]} rotation={cylRot}>
-        <cylinderGeometry args={[0.16, 0.16, 0.02, 32]} />
+      {/* Hub caps (accent) */}
+      <mesh material={accentMat} position={[0, 0, 0.53]} rotation={cylRot}>
+        <cylinderGeometry args={[0.17, 0.17, 0.02, 32]} />
       </mesh>
-      <mesh material={accentMat} position={[0, 0, -0.52]} rotation={cylRot}>
-        <cylinderGeometry args={[0.16, 0.16, 0.02, 32]} />
+      <mesh material={accentMat} position={[0, 0, -0.53]} rotation={cylRot}>
+        <cylinderGeometry args={[0.17, 0.17, 0.02, 32]} />
+      </mesh>
+      {/* Center emblem disc */}
+      <mesh material={accentMat} position={[0, 0, 0.545]} rotation={cylRot}>
+        <cylinderGeometry args={[0.07, 0.07, 0.01, 16]} />
+      </mesh>
+      <mesh material={accentMat} position={[0, 0, -0.545]} rotation={cylRot}>
+        <cylinderGeometry args={[0.07, 0.07, 0.01, 16]} />
       </mesh>
     </group>
   );
 }
 
-function Lights() {
+function Lights({ accentColor }: { accentColor: string }) {
   return (
     <>
-      {/* Lower ambient so rubber stays dark and readable on white bg */}
-      <ambientLight intensity={0.30} color="#e8eeff" />
-      {/* Strong top-left key for drama and tread detail */}
-      <directionalLight position={[4, 8, 5]} intensity={2.8} color="#ffffff" castShadow />
-      {/* Soft fill from lower right */}
-      <directionalLight position={[-3, -2, 3]} intensity={0.6} color="#dde8ff" />
-      {/* Accent colour backlight */}
-      <pointLight position={[0, 0, -5]} intensity={2.0} color="#CC0000" distance={10} />
+      {/* Low ambient — white bg provides natural fill */}
+      <ambientLight intensity={0.25} color="#eef0ff" />
+      {/* Strong key from upper-front-right */}
+      <directionalLight position={[5, 8, 6]} intensity={3.5} color="#ffffff" />
+      {/* Softer fill from left */}
+      <directionalLight position={[-5, 2, 4]} intensity={0.8} color="#d0e0ff" />
+      {/* Under fill — shows lower tread */}
+      <directionalLight position={[1, -4, 3]} intensity={0.45} color="#c8d8ff" />
+      {/* Accent back-light through rim */}
+      <pointLight position={[0, 0, -7]} intensity={3.5} color={accentColor} distance={16} />
       {/* Rim kicker left */}
-      <pointLight position={[-4, 1, -1]} intensity={1.8} color="#c0d0ff" distance={9} />
+      <pointLight position={[-7, 1, 0]} intensity={2.0} color="#b8ccff" distance={14} />
       {/* Rim kicker right */}
-      <pointLight position={[4, 1, -1]} intensity={1.4} color="#ffffff" distance={9} />
-      {/* Front top fill to reveal tread texture */}
-      <pointLight position={[0, 4, 4]} intensity={1.2} color="#ffffff" distance={8} />
+      <pointLight position={[7, 1, 0]} intensity={1.5} color="#ffffff" distance={14} />
+      {/* Front top for tread texture */}
+      <pointLight position={[0, 6, 5]} intensity={1.2} color="#ffffff" distance={14} />
     </>
   );
 }
@@ -214,14 +260,14 @@ interface Props {
 export default function ConfiguratorScene({ accentColor, rimColor, rimRoughness }: Props) {
   return (
     <Canvas
-      camera={{ position: [0, 0, 5.4], fov: 34 }}
+      camera={{ position: [0, 0, 7.5], fov: 34 }}
       gl={{ antialias: true, alpha: true }}
       style={{ width: "100%", height: "100%", background: "transparent" }}
       onCreated={({ gl }) => {
         gl.setClearColor(0x000000, 0);
       }}
     >
-      <Lights />
+      <Lights accentColor={accentColor} />
       <DraggableTyre accentColor={accentColor} rimColor={rimColor} rimRoughness={rimRoughness} />
     </Canvas>
   );
