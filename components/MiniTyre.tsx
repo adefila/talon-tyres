@@ -185,7 +185,7 @@ function TyreMesh({ accentColor }: { accentColor: string }) {
 export default function MiniTyre({ accentColor }: { accentColor: string }) {
   return (
     <Canvas
-      camera={{ position: [0, 0, 6.0], fov: 38 }}
+      camera={{ position: [0, 0, 5.2], fov: 32 }}
       gl={{ antialias: true, alpha: true }}
       style={{ width: "100%", height: "100%", background: "transparent" }}
       onCreated={({ gl }) => { gl.setClearColor(0x000000, 0); }}

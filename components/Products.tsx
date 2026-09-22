@@ -111,10 +111,10 @@ export default function Products() {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.08, duration: 0.6, ease }}
               className="group relative cursor-pointer overflow-hidden border border-[#E5E7EB]"
-              style={{ height: "390px" }}
+              style={{ height: "360px" }}
             >
-              {/* 3D Tyre on white background */}
-              <div className="relative bg-white flex items-center justify-center overflow-hidden" style={{ height: "210px" }}>
+              {/* 3D Tyre — fills full width, no extra padding */}
+              <div className="relative bg-white overflow-hidden" style={{ height: "240px" }}>
                 {p.badge && (
                   <div
                     className="absolute top-3 right-3 text-[9px] font-bold tracking-[0.18em] uppercase px-2.5 py-1 text-white z-20"
@@ -123,14 +123,15 @@ export default function Products() {
                     {p.badge}
                   </div>
                 )}
-                <div className="w-[185px] h-[185px] relative z-10">
+                {/* Canvas fills the full box — MiniTyre camera FOV frames the tyre */}
+                <div className="absolute inset-0 z-10">
                   <MiniTyre accentColor={p.accentColor} />
                 </div>
               </div>
 
               {/* Always-visible info */}
-              <div className="px-5 pt-4 pb-3">
-                <div className="flex items-center gap-2 mb-2.5">
+              <div className="px-4 pt-3 pb-2">
+                <div className="flex items-center gap-2 mb-1.5">
                   <span
                     className="w-1.5 h-1.5 rounded-full shrink-0"
                     style={{ background: p.accentColor }}
@@ -142,7 +143,7 @@ export default function Products() {
                     {p.category}
                   </span>
                 </div>
-                <h3 className="text-[20px] font-bold text-[#0A0A14] leading-tight tracking-tight mb-1.5">
+                <h3 className="text-[19px] font-bold text-[#0A0A14] leading-tight tracking-tight mb-1">
                   {p.name}
                 </h3>
                 <p className="text-[11px] text-[#6B7280] leading-snug">
@@ -153,7 +154,7 @@ export default function Products() {
 
               {/* Sliding overlay — slides up from bottom, fixed height */}
               <div
-                className="absolute inset-x-0 bottom-0 bg-white border-t border-[#E5E7EB] px-5 pb-5 translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-10"
+                className="absolute inset-x-0 bottom-0 bg-white border-t border-[#E5E7EB] px-4 pb-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-10"
                 style={{ transitionTimingFunction: "cubic-bezier(0.22,1,0.36,1)" }}
               >
                 <div className="pt-4 mb-3">
