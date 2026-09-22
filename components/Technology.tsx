@@ -3,6 +3,8 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
+const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
+
 const features = [
   {
     num: "01",
@@ -35,61 +37,61 @@ export default function Technology() {
   const inView = useInView(ref, { once: true, margin: "-5%" });
 
   return (
-    <section id="about" ref={ref} className="py-24 lg:py-32 bg-[#F5F5F5] overflow-hidden">
+    <section id="about" ref={ref} className="py-24 lg:py-32 bg-[#F7F7F7] overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
           {/* Left */}
           <motion.div
-            initial={{ opacity: 0, x: -40 }}
+            initial={{ opacity: 0, x: -30 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.7, ease }}
+            className="lg:sticky lg:top-28"
           >
-            <span className="text-[11px] font-bold tracking-[0.3em] uppercase text-[#CC0000] mb-4 block">
+            <span className="text-[10px] font-semibold tracking-[0.28em] uppercase text-[#CC0000] mb-4 block">
               Engineering
             </span>
-            <h2 className="text-[48px] lg:text-[58px] font-black uppercase leading-[0.9] text-[#0A0A14] mb-8">
-              Science
+            <h2 className="text-[44px] lg:text-[54px] font-bold uppercase leading-[1] tracking-[-0.02em] text-[#0A0A14] mb-6">
+              Science Behind
               <br />
-              Behind
-              <br />
-              <span className="italic">Every Grip.</span>
+              Every Grip.
             </h2>
-            <p className="text-[15px] text-[#6B7280] leading-relaxed max-w-md mb-10">
-              Every TALON tyre starts in our R&D facility where material scientists and racing engineers collaborate to push the boundaries of what rubber, steel, and physics can achieve.
-            </p>
+            <div className="flex items-start gap-4 mb-10">
+              <div className="w-px h-14 bg-[#CC0000] shrink-0 mt-1" />
+              <p className="text-[14px] text-[#6B7280] leading-relaxed">
+                Every TALON tyre starts in our R&amp;D facility where material
+                scientists and racing engineers collaborate to push the
+                boundaries of what rubber, steel, and physics can achieve.
+              </p>
+            </div>
             <a
               href="#contact"
-              className="inline-flex items-center gap-3 bg-[#0D0F1C] text-white text-[12px] font-bold tracking-widest uppercase px-8 py-4 hover:bg-[#CC0000] transition-colors duration-200 group"
+              className="group inline-flex items-center gap-2.5 bg-[#0D0F1C] text-white text-[11px] font-semibold tracking-[0.15em] uppercase px-7 py-3.5 hover:bg-[#CC0000] transition-colors duration-200"
             >
               Our Technology
-              <svg className="w-3.5 h-3.5 -rotate-45 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
+              <span className="text-[10px] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">↗</span>
             </a>
           </motion.div>
 
-          {/* Right: Feature list */}
-          <div className="space-y-px bg-[#E5E7EB]">
+          {/* Right: numbered features */}
+          <div className="flex flex-col divide-y divide-[#E5E7EB] border border-[#E5E7EB]">
             {features.map((f, i) => (
               <motion.div
                 key={f.num}
-                initial={{ opacity: 0, x: 30 }}
-                animate={inView ? { opacity: 1, x: 0 } : {}}
-                transition={{ delay: 0.1 + i * 0.08, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                className="bg-white hover:bg-[#0D0F1C] group transition-colors duration-300 p-8 cursor-default"
+                initial={{ opacity: 0, y: 20 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: 0.1 + i * 0.08, duration: 0.6, ease }}
+                className="group flex gap-5 p-6 hover:bg-[#0D0F1C] transition-colors duration-300 cursor-default"
               >
-                <div className="flex items-start gap-6">
-                  <span className="text-[11px] font-bold tracking-widest text-[#CC0000] group-hover:text-[#ff4444] transition-colors pt-1 shrink-0">
-                    {f.num}
-                  </span>
-                  <div>
-                    <h3 className="text-[17px] font-black uppercase text-[#0A0A14] group-hover:text-white transition-colors mb-2">
-                      {f.title}
-                    </h3>
-                    <p className="text-[13px] text-[#6B7280] group-hover:text-white/50 transition-colors leading-relaxed">
-                      {f.description}
-                    </p>
-                  </div>
+                <span className="text-[10px] font-semibold tracking-[0.2em] text-[#CC0000] group-hover:text-[#ff5555] transition-colors pt-1 shrink-0 w-6">
+                  {f.num}
+                </span>
+                <div>
+                  <h3 className="text-[15px] font-semibold text-[#0A0A14] group-hover:text-white transition-colors mb-2 tracking-tight">
+                    {f.title}
+                  </h3>
+                  <p className="text-[13px] text-[#6B7280] group-hover:text-white/50 transition-colors leading-relaxed">
+                    {f.description}
+                  </p>
                 </div>
               </motion.div>
             ))}

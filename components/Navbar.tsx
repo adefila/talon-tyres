@@ -34,19 +34,16 @@ export default function Navbar() {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
           ? "bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm"
-          : "bg-white"
+          : "bg-white border-b border-[#E5E7EB]"
       }`}
     >
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12 flex items-center justify-between h-[72px]">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-1 group">
-          <span className="text-[#CC0000] font-black text-2xl italic tracking-tight leading-none" style={{ fontFamily: "var(--font-inter)" }}>
-            <span className="inline-block relative">
-              <span className="absolute -bottom-0.5 left-0 w-full h-[2px] bg-[#CC0000]" />
-              talon
-            </span>
+        <Link href="/" className="flex items-baseline gap-0.5">
+          <span className="text-[#CC0000] font-bold text-[22px] italic tracking-[-0.03em]">
+            talon
           </span>
-          <span className="text-[10px] text-[#CC0000] font-bold tracking-widest self-end mb-0.5">™</span>
+          <span className="text-[9px] text-[#CC0000] font-semibold tracking-widest">™</span>
         </Link>
 
         {/* Desktop Nav */}
@@ -59,14 +56,14 @@ export default function Navbar() {
                 onMouseEnter={() => setProductsOpen(true)}
                 onMouseLeave={() => setProductsOpen(false)}
               >
-                <button className="flex items-center gap-1.5 text-[13px] font-semibold tracking-widest uppercase text-[#0A0A14] hover:text-[#CC0000] transition-colors">
+                <button className="flex items-center gap-1.5 text-[12px] font-medium tracking-[0.12em] uppercase text-[#0A0A14] hover:text-[#CC0000] transition-colors">
                   {link.label}
                   <svg
                     className={`w-3 h-3 transition-transform duration-200 ${productsOpen ? "rotate-180" : ""}`}
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                    strokeWidth={2.5}
+                    strokeWidth={2}
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
@@ -74,17 +71,17 @@ export default function Navbar() {
                 <AnimatePresence>
                   {productsOpen && (
                     <motion.div
-                      initial={{ opacity: 0, y: 8 }}
+                      initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 8 }}
-                      transition={{ duration: 0.18 }}
-                      className="absolute top-full left-0 mt-3 w-44 bg-white border border-gray-100 shadow-xl rounded-sm overflow-hidden"
+                      exit={{ opacity: 0, y: 6 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute top-full left-0 mt-3 w-40 bg-white border border-[#E5E7EB] shadow-lg overflow-hidden"
                     >
                       {link.dropdown.map((item) => (
                         <a
                           key={item}
                           href="#products"
-                          className="block px-5 py-3 text-[12px] font-semibold tracking-wider uppercase text-[#0A0A14] hover:bg-[#CC0000] hover:text-white transition-colors"
+                          className="block px-4 py-2.5 text-[11px] font-medium tracking-[0.15em] uppercase text-[#6B7280] hover:bg-[#0D0F1C] hover:text-white transition-colors"
                         >
                           {item}
                         </a>
@@ -97,7 +94,7 @@ export default function Navbar() {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-[13px] font-semibold tracking-widest uppercase text-[#0A0A14] hover:text-[#CC0000] transition-colors"
+                className="text-[12px] font-medium tracking-[0.12em] uppercase text-[#0A0A14] hover:text-[#CC0000] transition-colors"
               >
                 {link.label}
               </a>
@@ -105,16 +102,14 @@ export default function Navbar() {
           )}
         </nav>
 
-        {/* CTA */}
-        <div className="hidden md:flex items-center gap-4">
+        {/* CTA — clean rectangle */}
+        <div className="hidden md:flex">
           <a
             href="#products"
-            className="flex items-center gap-2 bg-[#0D0F1C] text-white text-[12px] font-bold tracking-widest uppercase px-6 py-3 hover:bg-[#CC0000] transition-colors duration-200"
+            className="group inline-flex items-center gap-2.5 bg-[#0D0F1C] text-white text-[11px] font-semibold tracking-[0.15em] uppercase px-6 py-3 hover:bg-[#CC0000] transition-colors duration-200"
           >
             Explore Products
-            <svg className="w-3.5 h-3.5 -rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
+            <span className="text-[10px] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">↗</span>
           </a>
         </div>
 
@@ -136,8 +131,8 @@ export default function Navbar() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden overflow-hidden bg-white border-t border-gray-100"
+            transition={{ duration: 0.25 }}
+            className="md:hidden overflow-hidden bg-white border-t border-[#E5E7EB]"
           >
             <div className="px-6 py-6 flex flex-col gap-5">
               {navLinks.map((link) => (
@@ -145,16 +140,16 @@ export default function Navbar() {
                   key={link.label}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className="text-[13px] font-semibold tracking-widest uppercase text-[#0A0A14]"
+                  className="text-[12px] font-medium tracking-[0.15em] uppercase text-[#0A0A14] hover:text-[#CC0000] transition-colors"
                 >
                   {link.label}
                 </a>
               ))}
               <a
                 href="#products"
-                className="mt-2 flex items-center justify-center gap-2 bg-[#0D0F1C] text-white text-[12px] font-bold tracking-widest uppercase px-6 py-3"
+                className="mt-2 flex items-center justify-center gap-2 bg-[#0D0F1C] text-white text-[11px] font-semibold tracking-[0.15em] uppercase px-6 py-3"
               >
-                Explore Products
+                Explore Products ↗
               </a>
             </div>
           </motion.div>

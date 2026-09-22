@@ -17,8 +17,7 @@
   --color-foreground: var(--foreground);
   --color-red: var(--red);
   --color-navy: var(--navy);
-  --font-sans: var(--font-inter);
-  --font-display: var(--font-barlow);
+  --font-sans: var(--font-space);
 }
 
 * {
@@ -32,7 +31,7 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), 'Inter', sans-serif;
+  font-family: var(--font-space), 'Space Grotesk', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -41,8 +40,4 @@ body {
 ::selection {
   background: var(--red);
   color: white;
-}
-
-.font-display {
-  font-family: var(--font-barlow), 'Barlow Condensed', sans-serif;
 }
