@@ -143,7 +143,7 @@ export default function Footer() {
         <TalonLogo
           color="white"
           className="w-[clamp(600px,90vw,1300px)] h-auto"
-          style={{ opacity: 0.055 } as React.CSSProperties}
+          style={{ opacity: 0.055 }}
         />
       </div>
     </footer>

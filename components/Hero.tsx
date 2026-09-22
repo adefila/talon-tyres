@@ -3,12 +3,12 @@
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
+import { ArrowUpRight, Star } from "lucide-react";
 
 const HeroCarAnimation = dynamic(() => import("./HeroCarAnimation"), { ssr: false });
 
 const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
-/* Word-split headline animation */
 const wordContainer: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.07, delayChildren: 0.1 } },
@@ -58,7 +58,7 @@ export default function Hero() {
   return (
     <section className="relative min-h-screen bg-[#0A0A14] overflow-hidden pt-[72px]">
 
-      {/* ── Car animation ── */}
+      {/* Car animation */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -69,7 +69,7 @@ export default function Hero() {
         <HeroCarAnimation />
       </motion.div>
 
-      {/* ── Gradient overlay — left text readability ── */}
+      {/* Gradient overlay */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -79,7 +79,7 @@ export default function Hero() {
         aria-hidden="true"
       />
 
-      {/* ── Red left accent bar ── */}
+      {/* Red left accent bar */}
       <motion.div
         initial={{ scaleY: 0, opacity: 0 }}
         animate={{ scaleY: 1, opacity: 1 }}
@@ -89,7 +89,7 @@ export default function Hero() {
         aria-hidden="true"
       />
 
-      {/* ── Content ── */}
+      {/* Content */}
       <div className="relative z-10 max-w-[1400px] mx-auto px-8 lg:px-16 min-h-[calc(100vh-72px)] flex flex-col justify-center">
         <div className="max-w-[600px]">
 
@@ -106,17 +106,16 @@ export default function Hero() {
             <span className="w-px h-4 bg-white/20" />
             <a
               href="#products"
-              className="group flex items-center gap-2 text-[11px] font-medium text-white/40 hover:text-white/70 transition-colors tracking-[0.1em]"
+              className="group flex items-center gap-2 text-[11px] font-medium text-white/60 hover:text-white/90 transition-colors tracking-[0.1em]"
             >
               20% off in store near you
-              <span className="inline-block transition-transform group-hover:translate-x-0.5">→</span>
+              <ArrowUpRight size={12} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </a>
           </motion.div>
 
           {/* Word-split headline */}
           <SplitHeadline lines={[["Tires", "Built"], ["for", "Every"], ["Turn."]]} />
 
-          {/* Sub */}
           <motion.div
             variants={stagger}
             initial="hidden"
@@ -125,7 +124,7 @@ export default function Hero() {
           >
             <motion.div variants={fadeUp} className="flex items-start gap-5 max-w-[480px]">
               <div className="w-px h-16 bg-[#CC0000] shrink-0 mt-0.5" />
-              <p className="text-[17px] text-white/50 leading-relaxed">
+              <p className="text-[17px] text-white/70 leading-relaxed">
                 Experience power, control, and safety with every mile. TALON tyres
                 are crafted for the road ahead — whether it&apos;s a daily
                 commute or a rugged expedition.
@@ -136,29 +135,36 @@ export default function Hero() {
             <motion.div variants={fadeUp} className="flex flex-wrap items-center gap-3">
               <motion.a
                 href="#products"
-                className="group inline-flex items-center gap-2.5 bg-[#CC0000] text-white text-[13px] font-bold tracking-[0.12em] uppercase px-8 py-4 hover:bg-white hover:text-[#CC0000] transition-colors duration-200"
+                className="group inline-flex items-center bg-[#CC0000] text-white text-[13px] font-bold tracking-[0.12em] uppercase px-8 py-4 hover:bg-white hover:text-[#CC0000] transition-colors duration-200"
+                style={{ transform: "skewX(-6deg)" }}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 400, damping: 20 }}
               >
-                Explore Products
-                <span className="text-[10px] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">↗</span>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: "10px", transform: "skewX(6deg)" }}>
+                  Explore Products
+                  <ArrowUpRight size={14} />
+                </span>
               </motion.a>
               <motion.a
                 href="#reviews"
-                className="inline-flex items-center gap-2.5 border border-white/20 text-white text-[13px] font-semibold tracking-[0.12em] uppercase px-8 py-4 hover:border-white hover:bg-white/5 transition-colors duration-200"
+                className="inline-flex items-center gap-2.5 border border-white/30 text-white text-[13px] font-semibold tracking-[0.12em] uppercase px-8 py-4 hover:border-white hover:bg-white/5 transition-colors duration-200"
+                style={{ transform: "skewX(-6deg)" }}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 400, damping: 20 }}
               >
-                Read Reviews
+                <span style={{ display: "inline-flex", alignItems: "center", gap: "8px", transform: "skewX(6deg)" }}>
+                  <Star size={13} />
+                  Read Reviews
+                </span>
               </motion.a>
             </motion.div>
           </motion.div>
         </div>
       </div>
 
-      {/* ── Bottom strip ── */}
+      {/* Bottom strip */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -170,20 +176,20 @@ export default function Hero() {
             <a
               key={t}
               href="#products"
-              className="flex-1 text-center py-4 text-[10px] font-semibold tracking-[0.2em] uppercase text-white/25 hover:text-white/60 hover:bg-white/[0.03] transition-colors"
+              className="flex-1 text-center py-4 text-[10px] font-semibold tracking-[0.2em] uppercase text-white/35 hover:text-white/70 hover:bg-white/[0.03] transition-colors"
             >
               {t}
             </a>
           ))}
           <div className="hidden lg:flex items-center gap-3 px-8 shrink-0">
-            <span className="text-[10px] font-semibold tracking-[0.22em] uppercase text-white/25">Featured</span>
+            <span className="text-[10px] font-semibold tracking-[0.22em] uppercase text-white/35">Featured</span>
             <span className="w-px h-3 bg-white/20" />
-            <span className="text-[10px] font-semibold tracking-[0.22em] uppercase text-white/25">Talon Pro GT</span>
+            <span className="text-[10px] font-semibold tracking-[0.22em] uppercase text-white/35">Talon Pro GT</span>
           </div>
         </div>
       </motion.div>
 
-      {/* ── Scroll hint ── */}
+      {/* Scroll hint */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -194,10 +200,10 @@ export default function Hero() {
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
-          className="w-px h-10 bg-gradient-to-b from-transparent via-white/20 to-transparent"
+          className="w-px h-10 bg-gradient-to-b from-transparent via-white/25 to-transparent"
         />
         <span
-          className="text-[9px] tracking-[0.3em] uppercase text-white/20 font-medium"
+          className="text-[9px] tracking-[0.3em] uppercase text-white/35 font-medium"
           style={{ writingMode: "vertical-rl" }}
         >
           Scroll

@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
 
 const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -108,8 +109,8 @@ function WaterIcon() {
   return (
     <svg viewBox="0 0 48 48" className="w-10 h-10" fill="none">
       <motion.rect x="4" y="30" width="40" height="10" rx="2" fill="#CC0000" opacity="0.2"
-        animate={{ scaleX: [0, 1] }}
-        transition={{ duration: 0.5, ease }}
+        animate={{ scaleX: [0, 1, 1, 0] }}
+        transition={{ duration: 2.2, repeat: Infinity, repeatDelay: 0.8, ease, times: [0, 0.3, 0.75, 1] }}
         style={{ transformOrigin: "left center" }}
       />
       {[0, 1, 2, 3].map(i => (
@@ -121,8 +122,8 @@ function WaterIcon() {
       {[0, 1].map(i => (
         <motion.line key={i} x1={16 + i * 16} y1="30" x2={16 + i * 16} y2="40"
           stroke="white" strokeWidth="1.5" opacity="0.35"
-          animate={{ pathLength: [0, 1] }}
-          transition={{ delay: 0.4 + i * 0.1, duration: 0.4 }}
+          animate={{ pathLength: [0, 1, 1, 0] }}
+          transition={{ duration: 2.2, repeat: Infinity, repeatDelay: 0.8, delay: 0.35 + i * 0.1, times: [0, 0.4, 0.75, 1] }}
         />
       ))}
     </svg>
@@ -165,10 +166,13 @@ export default function Technology() {
             </div>
             <a
               href="#contact"
-              className="group inline-flex items-center gap-2.5 bg-[#0D0F1C] text-white text-[11px] font-bold tracking-[0.15em] uppercase px-7 py-3.5 hover:bg-[#CC0000] transition-colors duration-200"
+              className="inline-flex items-center bg-[#0D0F1C] text-white text-[11px] font-bold tracking-[0.15em] uppercase px-7 py-3.5 hover:bg-[#CC0000] transition-colors duration-200"
+              style={{ transform: "skewX(-6deg)" }}
             >
-              Deep Dive
-              <span className="text-[10px] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">↗</span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: "8px", transform: "skewX(6deg)" }}>
+                Deep Dive
+                <ArrowUpRight size={13} />
+              </span>
             </a>
           </motion.div>
 
@@ -191,7 +195,7 @@ export default function Technology() {
                     <h3 className="text-[15px] font-bold text-[#0A0A14] group-hover:text-white transition-colors tracking-tight mb-2">
                       {f.title}
                     </h3>
-                    <p className="text-[13px] text-[#6B7280] group-hover:text-white/50 transition-colors leading-relaxed">
+                    <p className="text-[13px] text-[#6B7280] group-hover:text-white/65 transition-colors leading-relaxed">
                       {f.description}
                     </p>
                   </div>

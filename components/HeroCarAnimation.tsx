@@ -22,7 +22,7 @@ export default function HeroCarAnimation() {
       {/* Red sidewall accent ring */}
       <circle cx={cx} cy={WY} r={WR * 0.665} fill="none" stroke="#CC0000" strokeWidth="2.2" opacity="0.9" />
       {/* Spinning rim + spokes */}
-      <g className="hca-spin" style={{ transformOrigin: `${cx}px ${WY}px` } as React.CSSProperties}>
+      <g className="hca-spin" style={{ transformOrigin: `${cx}px ${WY}px` } as never}>
         <circle cx={cx} cy={WY} r={RI} fill="#252538" />
         {spokes(cx, WY).map((s, i) => (
           <line key={i} x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2}

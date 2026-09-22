@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { Settings2, ArrowUpRight } from "lucide-react";
 
 const MiniTyre = dynamic(() => import("./MiniTyre"), { ssr: false });
 
@@ -18,6 +19,7 @@ const products = [
     stat: { val: "18%", label: "More Wet Grip" },
     badge: "Bestseller",
     accentColor: "#CC0000",
+    makes: ["BMW 3 Series", "Audi A4", "Mercedes C-Class"],
   },
   {
     id: "02",
@@ -28,6 +30,7 @@ const products = [
     stat: { val: "4 yr", label: "Tread Warranty" },
     badge: "Most Popular",
     accentColor: "#1E40AF",
+    makes: ["Toyota Camry", "Honda Accord", "Mazda 6"],
   },
   {
     id: "03",
@@ -38,6 +41,7 @@ const products = [
     stat: { val: "6-ply", label: "Reinforced Casing" },
     badge: "New",
     accentColor: "#15803D",
+    makes: ["Ford Ranger", "Land Rover Defender", "Toyota Hilux"],
   },
   {
     id: "04",
@@ -48,6 +52,7 @@ const products = [
     stat: { val: "−40°C", label: "Operating Range" },
     badge: null,
     accentColor: "#0EA5E9",
+    makes: ["Volvo XC90", "BMW X5", "Audi Q7"],
   },
 ];
 
@@ -87,95 +92,109 @@ export default function Products() {
             <a
               href="#contact"
               className="group inline-flex items-center gap-2 border border-[#0D0F1C] text-[#0D0F1C] text-[11px] font-semibold tracking-[0.15em] uppercase px-6 py-3 hover:bg-[#0D0F1C] hover:text-white transition-colors duration-200"
+              style={{ transform: "skewX(-6deg)" }}
             >
-              View Full Range
-              <span className="text-[10px] transition-transform group-hover:translate-x-0.5">→</span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: "8px", transform: "skewX(6deg)" }}>
+                View Full Range
+                <ArrowUpRight size={13} />
+              </span>
             </a>
           </motion.div>
         </div>
 
         {/* Cards grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {products.map((p, i) => (
             <motion.div
               key={p.id}
               initial={{ opacity: 0, y: 28 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.08, duration: 0.6, ease }}
-              className="group relative flex flex-col border border-[#E5E7EB] hover:border-[#0D0F1C] transition-colors duration-300 cursor-pointer overflow-hidden"
+              className="group relative flex flex-col border border-[#E5E7EB] hover:border-[#D1D5DB] transition-colors duration-300 cursor-pointer overflow-hidden"
             >
-              {/* Accent strip */}
-              <div className="h-1 w-full" style={{ background: p.accentColor }} />
+              {/* Left accent bar */}
+              <div
+                className="absolute left-0 top-0 bottom-0 w-[3px] z-10"
+                style={{ background: p.accentColor }}
+              />
 
-              {/* 3D Tyre canvas area */}
-              <div className="relative bg-[#0D0F1C] group-hover:bg-[#080810] transition-colors duration-500 flex items-center justify-center h-[200px] overflow-hidden">
-                {/* Radial glow for tyre visibility */}
-                <div
-                  className="absolute inset-0 pointer-events-none z-0"
-                  style={{
-                    background: `radial-gradient(ellipse 65% 65% at 50% 50%, ${p.accentColor}22 0%, ${p.accentColor}0a 50%, transparent 72%)`,
-                  }}
-                />
-                {/* Background number watermark */}
-                <span className="absolute bottom-2 right-3 text-[80px] font-black leading-none text-white/[0.03] select-none">
-                  {p.id}
-                </span>
-                <div className="w-[170px] h-[170px] relative z-10">
-                  <MiniTyre accentColor={p.accentColor} />
-                </div>
+              {/* 3D Tyre on white background */}
+              <div className="relative bg-white flex items-center justify-center h-[210px] overflow-hidden pl-[3px]">
                 {p.badge && (
                   <div
-                    className="absolute top-4 left-4 text-[9px] font-bold tracking-[0.18em] uppercase px-2.5 py-1 text-white z-20"
+                    className="absolute top-3 right-3 text-[9px] font-bold tracking-[0.18em] uppercase px-2.5 py-1 text-white z-20"
                     style={{ background: p.accentColor }}
                   >
                     {p.badge}
                   </div>
                 )}
+                <div className="w-[185px] h-[185px] relative z-10">
+                  <MiniTyre accentColor={p.accentColor} />
+                </div>
               </div>
 
-              {/* Card body */}
-              <div className="flex flex-col flex-1 p-5 gap-4">
-                <div>
-                  <span className="text-[9px] font-semibold tracking-[0.22em] uppercase block mb-1.5" style={{ color: p.accentColor }}>
+              {/* Always-visible info */}
+              <div className="px-5 pt-4 pb-3 pl-6">
+                <div className="flex items-center gap-2 mb-2.5">
+                  <span
+                    className="w-1.5 h-1.5 rounded-full shrink-0"
+                    style={{ background: p.accentColor }}
+                  />
+                  <span
+                    className="text-[9px] font-bold tracking-[0.24em] uppercase"
+                    style={{ color: p.accentColor }}
+                  >
                     {p.category}
                   </span>
-                  <h3 className="text-[20px] font-bold text-[#0A0A14] leading-tight tracking-tight">
-                    {p.name}
-                  </h3>
-                  <p className="text-[14px] text-[#9CA3AF] mt-1 leading-relaxed">{p.tagline}</p>
+                </div>
+                <h3 className="text-[20px] font-bold text-[#0A0A14] leading-tight tracking-tight mb-1.5">
+                  {p.name}
+                </h3>
+                <p className="text-[11px] text-[#6B7280] leading-snug">
+                  <span className="font-semibold text-[#9CA3AF] uppercase tracking-[0.1em] text-[9px]">Fits </span>
+                  {p.makes.join(" · ")}
+                </p>
+              </div>
+
+              {/* Hover-reveal content */}
+              <div className="px-5 pb-5 pl-6 overflow-hidden max-h-0 opacity-0 group-hover:max-h-[260px] group-hover:opacity-100 transition-[max-height,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
+                <div className="border-t border-[#F0F0F0] pt-3 mb-3">
+                  <p className="text-[13px] text-[#374151] leading-relaxed">{p.tagline}</p>
                 </div>
 
                 {/* Key stat */}
-                <div className="flex items-baseline gap-2 py-3 border-y border-[#F0F0F0]">
-                  <span className="text-[22px] font-bold text-[#0A0A14] tracking-tight leading-none">
+                <div className="flex items-baseline gap-2 mb-3">
+                  <span className="text-[24px] font-black text-[#0A0A14] tracking-tight leading-none">
                     {p.stat.val}
                   </span>
-                  <span className="text-[10px] font-medium text-[#9CA3AF] uppercase tracking-wide leading-tight">
+                  <span className="text-[9px] font-semibold text-[#6B7280] uppercase tracking-[0.12em] leading-tight">
                     {p.stat.label}
                   </span>
                 </div>
 
-                {/* Sizes */}
-                <div className="flex flex-wrap gap-1.5">
+                {/* Size chips */}
+                <div className="flex flex-wrap gap-1.5 mb-4">
                   {p.specs.map((s) => (
                     <span
                       key={s}
-                      className="text-[9px] font-mono font-medium px-2 py-1 bg-[#F5F5F5] text-[#6B7280] tracking-wide"
+                      className="text-[9px] font-mono px-2 py-1 border border-[#E5E7EB] text-[#374151] tracking-wide"
                     >
                       {s}
                     </span>
                   ))}
                 </div>
 
-                {/* CTA */}
+                {/* Configure CTA */}
                 <a
                   href="#configure"
-                  className="group/btn mt-auto flex items-center justify-between border border-[#E5E7EB] px-4 py-3 hover:border-[#0D0F1C] hover:bg-[#0D0F1C] transition-all duration-200"
+                  className="inline-flex items-center text-white text-[10px] font-bold tracking-[0.18em] uppercase px-5 py-3 transition-opacity duration-200 hover:opacity-85"
+                  style={{ background: p.accentColor, transform: "skewX(-6deg)" }}
                 >
-                  <span className="text-[11px] font-semibold tracking-[0.15em] uppercase text-[#0A0A14] group-hover/btn:text-white transition-colors">
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: "7px", transform: "skewX(6deg)" }}>
+                    <Settings2 size={12} />
                     Configure
+                    <ArrowUpRight size={12} />
                   </span>
-                  <span className="text-[11px] text-[#9CA3AF] group-hover/btn:text-white transition-colors">→</span>
                 </a>
               </div>
             </motion.div>
