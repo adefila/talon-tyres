@@ -81,7 +81,7 @@ export default function Products() {
             transition={{ delay: 0.15, duration: 0.6, ease }}
             className="flex flex-col items-start lg:items-end gap-4"
           >
-            <p className="text-[14px] text-[#6B7280] max-w-sm leading-relaxed">
+            <p className="text-[16px] text-[#6B7280] max-w-sm leading-relaxed">
               Four precision-engineered tyre lines — from city circuits to remote trails.
             </p>
             <a
@@ -139,10 +139,10 @@ export default function Products() {
                   <span className="text-[9px] font-semibold tracking-[0.22em] uppercase block mb-1.5" style={{ color: p.accentColor }}>
                     {p.category}
                   </span>
-                  <h3 className="text-[18px] font-bold text-[#0A0A14] leading-tight tracking-tight">
+                  <h3 className="text-[20px] font-bold text-[#0A0A14] leading-tight tracking-tight">
                     {p.name}
                   </h3>
-                  <p className="text-[12px] text-[#9CA3AF] mt-1 leading-relaxed">{p.tagline}</p>
+                  <p className="text-[14px] text-[#9CA3AF] mt-1 leading-relaxed">{p.tagline}</p>
                 </div>
 
                 {/* Key stat */}

@@ -68,26 +68,9 @@ const socials = [
 
 export default function Footer() {
   return (
-    <footer className="bg-[#0A0A14] text-white relative overflow-hidden">
+    <footer className="bg-[#0A0A14] text-white overflow-hidden">
 
-      {/* ── Giant watermark TALON ── */}
-      <div
-        className="absolute inset-x-0 bottom-0 flex items-end justify-center pointer-events-none select-none"
-        aria-hidden="true"
-      >
-        <span
-          className="font-black italic leading-none tracking-[-0.04em] text-white"
-          style={{
-            fontSize: "clamp(160px, 30vw, 440px)",
-            opacity: 0.038,
-            lineHeight: 0.82,
-          }}
-        >
-          TALON
-        </span>
-      </div>
-
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 pt-20 pb-10">
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-12 pt-20 pb-10">
 
         {/* Top */}
         <div className="grid lg:grid-cols-5 gap-12 mb-16">
@@ -103,7 +86,7 @@ export default function Footer() {
                 className="h-[38px] w-auto object-contain brightness-0 invert"
               />
             </div>
-            <p className="text-[14px] text-white/40 leading-relaxed max-w-xs mb-8">
+            <p className="text-[16px] text-white/40 leading-relaxed max-w-xs mb-8">
               Engineered for every turn. TALON precision-crafted tyres are trusted by performance drivers, fleet operators, and weekend warriors across 50+ countries.
             </p>
 
@@ -125,7 +108,7 @@ export default function Footer() {
           {/* 3 link columns */}
           {Object.entries(footerLinks).map(([section, links]) => (
             <div key={section}>
-              <h4 className="text-[11px] font-bold tracking-[0.28em] uppercase text-white/25 mb-5">
+              <h4 className="text-[13px] font-bold tracking-[0.2em] uppercase text-white/25 mb-5">
                 {section}
               </h4>
               <ul className="space-y-3">
@@ -133,7 +116,7 @@ export default function Footer() {
                   <li key={link}>
                     <a
                       href="#"
-                      className="text-[13px] text-white/50 hover:text-white transition-colors"
+                      className="text-[15px] text-white/50 hover:text-white transition-colors"
                     >
                       {link}
                     </a>
@@ -146,17 +129,35 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-[12px] text-white/20">
+          <p className="text-[14px] text-white/20">
             &copy; {new Date().getFullYear()} TALON Tyres. All rights reserved. Engineered to outperform.
           </p>
           <div className="flex items-center gap-6">
             {["Privacy Policy", "Terms of Use", "Cookie Settings"].map((l) => (
-              <a key={l} href="#" className="text-[12px] text-white/20 hover:text-white/50 transition-colors">
+              <a key={l} href="#" className="text-[14px] text-white/20 hover:text-white/50 transition-colors">
                 {l}
               </a>
             ))}
           </div>
         </div>
+      </div>
+
+      {/* ── Giant watermark — standalone block at very bottom ── */}
+      <div
+        className="w-full flex items-end justify-center overflow-hidden pointer-events-none select-none"
+        aria-hidden="true"
+        style={{ height: "clamp(120px, 18vw, 280px)" }}
+      >
+        <span
+          className="font-black italic leading-none tracking-[-0.04em] text-white block"
+          style={{
+            fontSize: "clamp(160px, 30vw, 440px)",
+            opacity: 0.055,
+            lineHeight: 0.82,
+          }}
+        >
+          TALON
+        </span>
       </div>
     </footer>
   );

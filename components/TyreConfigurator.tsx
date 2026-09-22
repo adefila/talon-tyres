@@ -103,7 +103,7 @@ export default function TyreConfigurator() {
             <br />
             <span className="text-[#CC0000]">Perfect Set.</span>
           </h2>
-          <p className="text-[14px] text-[#6B7280] max-w-md leading-relaxed">
+          <p className="text-[16px] text-[#6B7280] max-w-md leading-relaxed">
             Select your tyre type, pick a rim finish, choose a size — then drag to inspect every angle in 3D before you enquire.
           </p>
         </motion.div>
@@ -137,8 +137,8 @@ export default function TyreConfigurator() {
                       className="w-2 h-2 rounded-full mb-3"
                       style={{ background: t.accentColor }}
                     />
-                    <div className="text-[12px] font-bold text-[#0A0A14] tracking-tight">{t.label}</div>
-                    <div className="text-[10px] text-[#9CA3AF] mt-0.5">{t.sub}</div>
+                    <div className="text-[14px] font-bold text-[#0A0A14] tracking-tight">{t.label}</div>
+                    <div className="text-[12px] text-[#9CA3AF] mt-0.5">{t.sub}</div>
                   </button>
                 ))}
               </div>
@@ -281,8 +281,8 @@ export default function TyreConfigurator() {
                   style={{ background: tyre.accentColor }}
                 />
                 <div>
-                  <div className="text-[16px] font-bold text-[#0A0A14] tracking-tight">{tyre.sub}</div>
-                  <div className="text-[13px] text-[#6B7280] leading-snug mt-0.5">{tyre.tag}</div>
+                  <div className="text-[18px] font-bold text-[#0A0A14] tracking-tight">{tyre.sub}</div>
+                  <div className="text-[15px] text-[#6B7280] leading-snug mt-0.5">{tyre.tag}</div>
                 </div>
               </motion.div>
             </AnimatePresence>

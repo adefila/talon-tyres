@@ -61,7 +61,7 @@ export default function Navbar() {
                 onMouseEnter={() => setProductsOpen(true)}
                 onMouseLeave={() => setProductsOpen(false)}
               >
-                <button className="flex items-center gap-1.5 text-[12px] font-medium tracking-[0.12em] uppercase text-[#0A0A14] hover:text-[#CC0000] transition-colors">
+                <button className="flex items-center gap-1.5 text-[14px] font-medium tracking-[0.08em] uppercase text-[#0A0A14] hover:text-[#CC0000] transition-colors">
                   {link.label}
                   <svg
                     className={`w-3 h-3 transition-transform duration-200 ${productsOpen ? "rotate-180" : ""}`}
@@ -86,7 +86,7 @@ export default function Navbar() {
                         <a
                           key={item}
                           href="#products"
-                          className="block px-4 py-2.5 text-[11px] font-medium tracking-[0.15em] uppercase text-[#6B7280] hover:bg-[#0D0F1C] hover:text-white transition-colors"
+                          className="block px-4 py-2.5 text-[13px] font-medium tracking-[0.1em] uppercase text-[#6B7280] hover:bg-[#0D0F1C] hover:text-white transition-colors"
                         >
                           {item}
                         </a>
@@ -99,7 +99,7 @@ export default function Navbar() {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-[12px] font-medium tracking-[0.12em] uppercase text-[#0A0A14] hover:text-[#CC0000] transition-colors"
+                className="text-[14px] font-medium tracking-[0.08em] uppercase text-[#0A0A14] hover:text-[#CC0000] transition-colors"
               >
                 {link.label}
               </a>
@@ -111,7 +111,7 @@ export default function Navbar() {
         <div className="hidden md:flex">
           <a
             href="#configure"
-            className="group inline-flex items-center gap-2.5 bg-[#0D0F1C] text-white text-[11px] font-semibold tracking-[0.15em] uppercase px-6 py-3 hover:bg-[#CC0000] transition-colors duration-200"
+            className="group inline-flex items-center gap-2.5 bg-[#0D0F1C] text-white text-[13px] font-semibold tracking-[0.12em] uppercase px-6 py-3 hover:bg-[#CC0000] transition-colors duration-200"
           >
             Build Your Set
             <span className="text-[10px] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">↗</span>
@@ -146,14 +146,14 @@ export default function Navbar() {
                   key={link.label}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className="text-[12px] font-medium tracking-[0.15em] uppercase text-[#0A0A14] hover:text-[#CC0000] transition-colors"
+                  className="text-[14px] font-medium tracking-[0.1em] uppercase text-[#0A0A14] hover:text-[#CC0000] transition-colors"
                 >
                   {link.label}
                 </a>
               ))}
               <a
                 href="#configure"
-                className="mt-2 flex items-center justify-center gap-2 bg-[#0D0F1C] text-white text-[11px] font-semibold tracking-[0.15em] uppercase px-6 py-3"
+                className="mt-2 flex items-center justify-center gap-2 bg-[#0D0F1C] text-white text-[13px] font-semibold tracking-[0.12em] uppercase px-6 py-3"
               >
                 Build Your Set ↗
               </a>

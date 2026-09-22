@@ -15,7 +15,7 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
   const isDragging = useRef(false);
   const prevMouse = useRef({ x: 0, y: 0 });
   const velocity = useRef({ x: 0, y: 0 });
-  const rotation = useRef({ x: 0.3, z: 0 });
+  const rotation = useRef<{ x: number; y: number; z: number }>({ x: 0.72, y: 0.28, z: 0 });
   const { gl } = useThree();
 
   /* Materials */
@@ -125,7 +125,7 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
     if (!groupRef.current) return;
     if (!isDragging.current) {
       /* Slow auto-rotate when idle */
-      rotation.current.z += delta * 0.18;
+      rotation.current.z += delta * 0.22;
       /* Decay velocity */
       velocity.current.x *= 0.94;
       velocity.current.y *= 0.94;
@@ -133,6 +133,7 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
       rotation.current.z += velocity.current.y;
     }
     groupRef.current.rotation.x = rotation.current.x;
+    groupRef.current.rotation.y = rotation.current.y;
     groupRef.current.rotation.z = rotation.current.z;
   });
 

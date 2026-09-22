@@ -135,7 +135,7 @@ export default function Hero() {
           >
             <motion.div variants={fadeUp} className="flex items-start gap-5 max-w-[480px]">
               <div className="w-px h-16 bg-[#CC0000] shrink-0 mt-0.5" />
-              <p className="text-[15px] text-white/50 leading-relaxed">
+              <p className="text-[17px] text-white/50 leading-relaxed">
                 Experience power, control, and safety with every mile. TALON tyres
                 are crafted for the road ahead — whether it&apos;s a daily
                 commute or a rugged expedition.
@@ -146,7 +146,7 @@ export default function Hero() {
             <motion.div variants={fadeUp} className="flex flex-wrap items-center gap-3">
               <motion.a
                 href="#products"
-                className="group inline-flex items-center gap-2.5 bg-[#CC0000] text-white text-[11px] font-bold tracking-[0.15em] uppercase px-8 py-4 hover:bg-white hover:text-[#CC0000] transition-colors duration-200"
+                className="group inline-flex items-center gap-2.5 bg-[#CC0000] text-white text-[13px] font-bold tracking-[0.12em] uppercase px-8 py-4 hover:bg-white hover:text-[#CC0000] transition-colors duration-200"
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 400, damping: 20 }}
@@ -156,7 +156,7 @@ export default function Hero() {
               </motion.a>
               <motion.a
                 href="#reviews"
-                className="inline-flex items-center gap-2.5 border border-white/20 text-white text-[11px] font-semibold tracking-[0.15em] uppercase px-8 py-4 hover:border-white hover:bg-white/5 transition-colors duration-200"
+                className="inline-flex items-center gap-2.5 border border-white/20 text-white text-[13px] font-semibold tracking-[0.12em] uppercase px-8 py-4 hover:border-white hover:bg-white/5 transition-colors duration-200"
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 400, damping: 20 }}
