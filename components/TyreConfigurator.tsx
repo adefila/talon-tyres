@@ -57,10 +57,10 @@ const rimOptions = [
 function RatingBar({ label, value, color }: { label: string; value: number; color: string }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="text-[10px] font-semibold tracking-[0.15em] uppercase text-white/40 w-16 shrink-0">
+      <span className="text-[10px] font-semibold tracking-[0.15em] uppercase text-[#9CA3AF] w-16 shrink-0">
         {label}
       </span>
-      <div className="flex-1 h-[3px] bg-white/10 rounded-full overflow-hidden">
+      <div className="flex-1 h-[3px] bg-[#E5E7EB] rounded-full overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${value}%` }}
@@ -69,7 +69,7 @@ function RatingBar({ label, value, color }: { label: string; value: number; colo
           style={{ background: color }}
         />
       </div>
-      <span className="text-[10px] font-bold text-white/60 w-6 text-right">{value}</span>
+      <span className="text-[10px] font-bold text-[#6B7280] w-6 text-right">{value}</span>
     </div>
   );
 }
@@ -85,7 +85,7 @@ export default function TyreConfigurator() {
   const rim = rimOptions[activeRim];
 
   return (
-    <section id="configure" ref={ref} className="bg-[#080810] py-24 lg:py-32 overflow-hidden">
+    <section id="configure" ref={ref} className="bg-white py-24 lg:py-32 overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
 
         {/* Header */}
@@ -98,12 +98,12 @@ export default function TyreConfigurator() {
           <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-[#CC0000] mb-4 block">
             Interactive Configurator
           </span>
-          <h2 className="text-[44px] lg:text-[60px] font-bold uppercase leading-[1] tracking-[-0.025em] text-white mb-4">
+          <h2 className="text-[44px] lg:text-[60px] font-bold uppercase leading-[1] tracking-[-0.025em] text-[#0A0A14] mb-4">
             Build Your
             <br />
             <span className="text-[#CC0000]">Perfect Set.</span>
           </h2>
-          <p className="text-[14px] text-white/40 max-w-md leading-relaxed">
+          <p className="text-[14px] text-[#6B7280] max-w-md leading-relaxed">
             Select your tyre type, pick a rim finish, choose a size — then drag to inspect every angle in 3D before you enquire.
           </p>
         </motion.div>
@@ -119,7 +119,7 @@ export default function TyreConfigurator() {
           >
             {/* Tyre Type */}
             <div>
-              <p className="text-[10px] font-bold tracking-[0.28em] uppercase text-white/30 mb-4">
+              <p className="text-[10px] font-bold tracking-[0.28em] uppercase text-[#9CA3AF] mb-4">
                 Tyre Type
               </p>
               <div className="grid grid-cols-2 gap-2">
@@ -129,16 +129,16 @@ export default function TyreConfigurator() {
                     onClick={() => { setActiveType(i); setActiveSize(0); }}
                     className={`text-left p-4 border transition-all duration-200 ${
                       activeType === i
-                        ? "border-white/30 bg-white/[0.06]"
-                        : "border-white/10 hover:border-white/20 hover:bg-white/[0.03]"
+                        ? "border-[#0A0A14] bg-[#0A0A14]/[0.05]"
+                        : "border-[#E5E7EB] hover:border-[#D1D5DB] hover:bg-[#F9F9F9]"
                     }`}
                   >
                     <div
                       className="w-2 h-2 rounded-full mb-3"
                       style={{ background: t.accentColor }}
                     />
-                    <div className="text-[12px] font-bold text-white tracking-tight">{t.label}</div>
-                    <div className="text-[10px] text-white/40 mt-0.5">{t.sub}</div>
+                    <div className="text-[12px] font-bold text-[#0A0A14] tracking-tight">{t.label}</div>
+                    <div className="text-[10px] text-[#9CA3AF] mt-0.5">{t.sub}</div>
                   </button>
                 ))}
               </div>
@@ -146,7 +146,7 @@ export default function TyreConfigurator() {
 
             {/* Rim Finish */}
             <div>
-              <p className="text-[10px] font-bold tracking-[0.28em] uppercase text-white/30 mb-4">
+              <p className="text-[10px] font-bold tracking-[0.28em] uppercase text-[#9CA3AF] mb-4">
                 Rim Finish
               </p>
               <div className="flex gap-2 flex-wrap">
@@ -157,13 +157,13 @@ export default function TyreConfigurator() {
                     title={r.label}
                     className={`flex items-center gap-2 px-4 py-2.5 border text-[11px] font-semibold tracking-[0.12em] uppercase transition-all ${
                       activeRim === i
-                        ? "border-white/40 text-white"
-                        : "border-white/10 text-white/40 hover:border-white/20 hover:text-white/70"
+                        ? "border-[#0A0A14] text-[#0A0A14]"
+                        : "border-[#E5E7EB] text-[#6B7280] hover:border-[#D1D5DB] hover:text-[#374151]"
                     }`}
                   >
                     <span
                       className="w-3 h-3 rounded-full shrink-0"
-                      style={{ background: r.color, border: "1px solid rgba(255,255,255,0.15)" }}
+                      style={{ background: r.color, border: "1px solid rgba(0,0,0,0.15)" }}
                     />
                     {r.label}
                   </button>
@@ -173,7 +173,7 @@ export default function TyreConfigurator() {
 
             {/* Tyre Size */}
             <div>
-              <p className="text-[10px] font-bold tracking-[0.28em] uppercase text-white/30 mb-4">
+              <p className="text-[10px] font-bold tracking-[0.28em] uppercase text-[#9CA3AF] mb-4">
                 Size
               </p>
               <div className="flex gap-2 flex-wrap">
@@ -183,8 +183,8 @@ export default function TyreConfigurator() {
                     onClick={() => setActiveSize(i)}
                     className={`px-4 py-2.5 border font-mono text-[11px] transition-all ${
                       activeSize === i
-                        ? "border-white/40 text-white bg-white/[0.06]"
-                        : "border-white/10 text-white/40 hover:border-white/20 hover:text-white/70"
+                        ? "border-[#0A0A14] text-[#0A0A14] bg-[#0A0A14]/[0.05]"
+                        : "border-[#E5E7EB] text-[#6B7280] hover:border-[#D1D5DB] hover:text-[#374151]"
                     }`}
                   >
                     {s}
@@ -201,9 +201,9 @@ export default function TyreConfigurator() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
-                className="border border-white/10 p-5 flex flex-col gap-4"
+                className="border border-[#E5E7EB] p-5 flex flex-col gap-4"
               >
-                <p className="text-[10px] font-bold tracking-[0.28em] uppercase text-white/30 mb-1">
+                <p className="text-[10px] font-bold tracking-[0.28em] uppercase text-[#9CA3AF] mb-1">
                   Performance Ratings
                 </p>
                 <RatingBar label="Grip" value={tyre.rating.grip} color={tyre.accentColor} />
@@ -220,12 +220,12 @@ export default function TyreConfigurator() {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                className="group inline-flex items-center gap-2.5 bg-[#CC0000] text-white text-[11px] font-bold tracking-[0.15em] uppercase px-7 py-4 hover:bg-white hover:text-[#CC0000] transition-colors duration-200"
+                className="group inline-flex items-center gap-2.5 bg-[#CC0000] text-white text-[11px] font-bold tracking-[0.15em] uppercase px-7 py-4 hover:bg-[#0A0A14] hover:text-white transition-colors duration-200"
               >
                 Request a Quote
                 <span className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">↗</span>
               </motion.a>
-              <span className="text-[11px] text-white/25 tracking-wide">
+              <span className="text-[11px] text-[#9CA3AF] tracking-wide">
                 {tyre.sizes[activeSize]} · {rim.label}
               </span>
             </div>
@@ -273,10 +273,10 @@ export default function TyreConfigurator() {
 
               {/* Drag hint */}
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 pointer-events-none">
-                <svg className="w-3.5 h-3.5 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-3.5 h-3.5 text-[#9CA3AF]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
                 </svg>
-                <span className="text-[10px] text-white/30 tracking-[0.2em] uppercase">Drag to rotate</span>
+                <span className="text-[10px] text-[#9CA3AF] tracking-[0.2em] uppercase">Drag to rotate</span>
               </div>
             </div>
 
@@ -295,8 +295,8 @@ export default function TyreConfigurator() {
                   style={{ background: tyre.accentColor }}
                 />
                 <div>
-                  <div className="text-[16px] font-bold text-white tracking-tight">{tyre.sub}</div>
-                  <div className="text-[13px] text-white/45 leading-snug mt-0.5">{tyre.tag}</div>
+                  <div className="text-[16px] font-bold text-[#0A0A14] tracking-tight">{tyre.sub}</div>
+                  <div className="text-[13px] text-[#6B7280] leading-snug mt-0.5">{tyre.tag}</div>
                 </div>
               </motion.div>
             </AnimatePresence>
