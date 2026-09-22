@@ -31,19 +31,17 @@ export default function Navbar() {
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm"
-          : "bg-white border-b border-[#E5E7EB]"
+          ? "bg-white/96 backdrop-blur-md border-b border-[#E5E7EB] shadow-sm"
+          : "bg-transparent border-b border-white/[0.06]"
       }`}
     >
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12 flex items-center justify-between h-[72px]">
         {/* Logo */}
         <Link href="/" className="flex items-baseline gap-0.5">
-          <span className="text-[#CC0000] font-bold text-[22px] italic tracking-[-0.03em]">
-            talon
-          </span>
-          <span className="text-[9px] text-[#CC0000] font-semibold tracking-widest">™</span>
+          <span className="text-[#CC0000] font-bold text-[22px] italic tracking-[-0.03em]">talon</span>
+          <span className="text-[9px] text-[#CC0000] font-semibold">™</span>
         </Link>
 
         {/* Desktop Nav */}
@@ -56,7 +54,7 @@ export default function Navbar() {
                 onMouseEnter={() => setProductsOpen(true)}
                 onMouseLeave={() => setProductsOpen(false)}
               >
-                <button className="flex items-center gap-1.5 text-[12px] font-medium tracking-[0.12em] uppercase text-[#0A0A14] hover:text-[#CC0000] transition-colors">
+                <button className={`flex items-center gap-1.5 text-[12px] font-medium tracking-[0.12em] uppercase hover:text-[#CC0000] transition-colors ${scrolled ? "text-[#0A0A14]" : "text-white/80"}`}>
                   {link.label}
                   <svg
                     className={`w-3 h-3 transition-transform duration-200 ${productsOpen ? "rotate-180" : ""}`}
@@ -94,7 +92,7 @@ export default function Navbar() {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-[12px] font-medium tracking-[0.12em] uppercase text-[#0A0A14] hover:text-[#CC0000] transition-colors"
+                className={`text-[12px] font-medium tracking-[0.12em] uppercase hover:text-[#CC0000] transition-colors ${scrolled ? "text-[#0A0A14]" : "text-white/80"}`}
               >
                 {link.label}
               </a>
@@ -118,9 +116,9 @@ export default function Navbar() {
           className="md:hidden flex flex-col gap-1.5 p-1"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
-          <span className={`block h-0.5 bg-[#0A0A14] transition-all duration-300 ${mobileOpen ? "w-6 rotate-45 translate-y-2" : "w-6"}`} />
-          <span className={`block h-0.5 bg-[#0A0A14] transition-all duration-300 ${mobileOpen ? "opacity-0 w-4" : "w-4"}`} />
-          <span className={`block h-0.5 bg-[#0A0A14] transition-all duration-300 ${mobileOpen ? "w-6 -rotate-45 -translate-y-2" : "w-6"}`} />
+          <span className={`block h-0.5 transition-all duration-300 ${scrolled ? "bg-[#0A0A14]" : "bg-white"} ${mobileOpen ? "w-6 rotate-45 translate-y-2" : "w-6"}`} />
+          <span className={`block h-0.5 transition-all duration-300 ${scrolled ? "bg-[#0A0A14]" : "bg-white"} ${mobileOpen ? "opacity-0 w-4" : "w-4"}`} />
+          <span className={`block h-0.5 transition-all duration-300 ${scrolled ? "bg-[#0A0A14]" : "bg-white"} ${mobileOpen ? "w-6 -rotate-45 -translate-y-2" : "w-6"}`} />
         </button>
       </div>
 
