@@ -66,7 +66,7 @@ export default function Hero() {
         className="absolute inset-0 flex items-center justify-end pointer-events-none"
         aria-hidden="true"
       >
-        <div className="w-[580px] h-[580px] lg:w-[760px] lg:h-[760px] translate-x-[12%] lg:translate-x-[8%]">
+        <div className="w-[680px] h-[680px] lg:w-[920px] lg:h-[920px] translate-x-[6%] lg:translate-x-[2%]">
           <TyreScene />
         </div>
       </motion.div>

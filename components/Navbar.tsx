@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 
 const navLinks = [
   {
@@ -10,8 +11,8 @@ const navLinks = [
     href: "#products",
     dropdown: ["Performance", "All-Season", "Off-Road", "Winter"],
   },
-  { label: "Reviews", href: "#reviews" },
-  { label: "About", href: "#about" },
+  { label: "Configure", href: "#configure" },
+  { label: "Technology", href: "#about" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -38,12 +39,16 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12 flex items-center justify-between h-[72px]">
-        {/* Logo */}
-        <Link href="/" className="flex items-baseline gap-0.5">
-          <span className="text-[#CC0000] font-bold text-[22px] italic tracking-[-0.03em]">
-            talon
-          </span>
-          <span className="text-[9px] text-[#CC0000] font-semibold tracking-widest">™</span>
+        {/* Actual TALON logo */}
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/logo.png"
+            alt="TALON Tyres"
+            width={120}
+            height={38}
+            className="h-[34px] w-auto object-contain"
+            priority
+          />
         </Link>
 
         {/* Desktop Nav */}
@@ -102,13 +107,13 @@ export default function Navbar() {
           )}
         </nav>
 
-        {/* CTA — clean rectangle */}
+        {/* CTA */}
         <div className="hidden md:flex">
           <a
-            href="#products"
+            href="#configure"
             className="group inline-flex items-center gap-2.5 bg-[#0D0F1C] text-white text-[11px] font-semibold tracking-[0.15em] uppercase px-6 py-3 hover:bg-[#CC0000] transition-colors duration-200"
           >
-            Explore Products
+            Build Your Set
             <span className="text-[10px] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">↗</span>
           </a>
         </div>
@@ -117,6 +122,7 @@ export default function Navbar() {
         <button
           className="md:hidden flex flex-col gap-1.5 p-1"
           onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label="Toggle menu"
         >
           <span className={`block h-0.5 bg-[#0A0A14] transition-all duration-300 ${mobileOpen ? "w-6 rotate-45 translate-y-2" : "w-6"}`} />
           <span className={`block h-0.5 bg-[#0A0A14] transition-all duration-300 ${mobileOpen ? "opacity-0 w-4" : "w-4"}`} />
@@ -146,10 +152,10 @@ export default function Navbar() {
                 </a>
               ))}
               <a
-                href="#products"
+                href="#configure"
                 className="mt-2 flex items-center justify-center gap-2 bg-[#0D0F1C] text-white text-[11px] font-semibold tracking-[0.15em] uppercase px-6 py-3"
               >
-                Explore Products ↗
+                Build Your Set ↗
               </a>
             </div>
           </motion.div>
