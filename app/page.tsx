@@ -2,8 +2,9 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Stats from "@/components/Stats";
 import Marquee from "@/components/Marquee";
-import TyreConfigurator from "@/components/TyreConfigurator";
 import Products from "@/components/Products";
+import TyreConfigurator from "@/components/TyreConfigurator";
+import TyreShowcase from "@/components/TyreShowcase";
 import Technology from "@/components/Technology";
 import Reviews from "@/components/Reviews";
 import CtaBanner from "@/components/CtaBanner";
@@ -18,6 +19,7 @@ export default function Home() {
       <Marquee />
       <Products />
       <TyreConfigurator />
+      <TyreShowcase />
       <Technology />
       <Reviews />
       <CtaBanner />

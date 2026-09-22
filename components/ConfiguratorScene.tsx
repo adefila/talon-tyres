@@ -15,19 +15,17 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
   const isDragging = useRef(false);
   const prevMouse = useRef({ x: 0, y: 0 });
   const velocity = useRef({ x: 0, y: 0 });
-  const rot = useRef({ x: 0.38, y: 0.0 });
+  const rot = useRef({ x: 0.42, y: 0.0 });
   const { gl } = useThree();
-
-  const R = 1.44, T = 0.50;
 
   /* ── Materials ── */
   const rubber = useMemo(() => new THREE.MeshStandardMaterial({
-    color: "#222232", roughness: 0.90, metalness: 0.03,
-    emissive: "#0a0a14", emissiveIntensity: 0.08,
+    color: "#1e1e2e", roughness: 0.88, metalness: 0.04,
+    emissive: "#090910", emissiveIntensity: 0.10,
   }), []);
 
   const grooveMat = useMemo(() => new THREE.MeshStandardMaterial({
-    color: "#07070f", roughness: 0.99, metalness: 0,
+    color: "#05050c", roughness: 0.99, metalness: 0,
   }), []);
 
   const rimMat = useMemo(() => new THREE.MeshStandardMaterial({
@@ -50,41 +48,56 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
     color: "#040408", roughness: 0.97, metalness: 0.05,
   }), []);
 
-  /* ── Circumferential tread grooves ── */
+  /* ── Realistic car tyre profile (LatheGeometry, revolves around Y) ──
+     Points: (radius, height) — rotated 90° around X so axle points in Z  */
+  const tyreProfile = useMemo<THREE.Vector2[]>(() => [
+    new THREE.Vector2(0.97, -0.48),  // bead seat
+    new THREE.Vector2(0.98, -0.43),  // bead lip
+    new THREE.Vector2(1.04, -0.43),  // sidewall base
+    new THREE.Vector2(1.10, -0.46),  // sidewall slight bulge
+    new THREE.Vector2(1.32, -0.45),  // mid sidewall sweeping outward
+    new THREE.Vector2(1.43, -0.40),  // shoulder
+    new THREE.Vector2(1.47, -0.32),  // tread edge
+    new THREE.Vector2(1.48, -0.16),  // tread inner
+    new THREE.Vector2(1.48,  0.00),  // tread center
+    new THREE.Vector2(1.48,  0.16),  // tread inner
+    new THREE.Vector2(1.47,  0.32),  // tread edge
+    new THREE.Vector2(1.43,  0.40),  // shoulder
+    new THREE.Vector2(1.32,  0.45),  // mid sidewall
+    new THREE.Vector2(1.10,  0.46),  // sidewall slight bulge
+    new THREE.Vector2(1.04,  0.43),  // sidewall base
+    new THREE.Vector2(0.98,  0.43),  // bead lip
+    new THREE.Vector2(0.97,  0.48),  // bead seat
+  ], []);
+
+  /* ── 4 circumferential tread grooves on flat tread ── */
   const treadGrooves = useMemo<ReactElement[]>(() => {
-    // Groove positions: tube angles ±20° and ±50° from the outer equator
-    const positions = [
-      { r: R + T * Math.cos(50 * Math.PI/180) - 0.015, z: -T * Math.sin(50 * Math.PI/180) },
-      { r: R + T * Math.cos(20 * Math.PI/180) - 0.015, z: -T * Math.sin(20 * Math.PI/180) },
-      { r: R + T * Math.cos(20 * Math.PI/180) - 0.015, z:  T * Math.sin(20 * Math.PI/180) },
-      { r: R + T * Math.cos(50 * Math.PI/180) - 0.015, z:  T * Math.sin(50 * Math.PI/180) },
-    ];
-    return positions.map((p, i) => (
-      <mesh key={i} position={[0, 0, p.z]} material={grooveMat}>
-        <torusGeometry args={[p.r, 0.030, 8, 96]} />
+    const grooveZ = [-0.24, -0.08, 0.08, 0.24];
+    return grooveZ.map((z, i) => (
+      <mesh key={i} position={[0, 0, z]} material={grooveMat}>
+        <torusGeometry args={[1.472, 0.032, 8, 96]} />
       </mesh>
     ));
   }, [grooveMat]);
 
   /* ── 5 Spokes ── */
-  const spokes = useMemo<ReactElement[]>(() => {
-    return Array.from({ length: 5 }).map((_, i) => {
+  const spokes = useMemo<ReactElement[]>(() =>
+    Array.from({ length: 5 }).map((_, i) => {
       const angle = (i / 5) * Math.PI * 2;
       return (
         <group key={i} rotation={[0, 0, angle]}>
-          <mesh position={[0, 0.50, 0]} material={spokeMat}>
-            <boxGeometry args={[0.11, 0.80, 0.22]} />
+          <mesh position={[0, 0.52, 0]} material={spokeMat}>
+            <boxGeometry args={[0.11, 0.82, 0.22]} />
           </mesh>
-          <mesh position={[0, 0.86, 0]} material={rimMat}>
+          <mesh position={[0, 0.88, 0]} material={rimMat}>
             <boxGeometry args={[0.17, 0.24, 0.28]} />
           </mesh>
-          <mesh position={[0, 0.24, 0]} material={spokeMat}>
+          <mesh position={[0, 0.25, 0]} material={spokeMat}>
             <boxGeometry args={[0.08, 0.22, 0.18]} />
           </mesh>
         </group>
       );
-    });
-  }, [spokeMat, rimMat]);
+    }), [spokeMat, rimMat]);
 
   /* ── Lug bolt holes (5 per face) ── */
   const lugHoles = useMemo<ReactElement[]>(() => {
@@ -155,42 +168,39 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
 
   return (
     <group ref={groupRef} scale={[0.80, 0.80, 0.80]}>
-      {/* Outer tyre body */}
-      <mesh material={rubber}>
-        <torusGeometry args={[R, T, 32, 96]} />
+
+      {/* ── Tyre body: LatheGeometry for realistic car tyre profile ── */}
+      <mesh material={rubber} rotation={cylRot}>
+        <latheGeometry args={[tyreProfile, 96]} />
       </mesh>
 
       {/* Circumferential tread grooves */}
       {treadGrooves}
 
-      {/* Sidewall inner surface */}
-      <mesh material={rubber} rotation={cylRot}>
-        <cylinderGeometry args={[0.96, 0.96, 1.02, 64, 1, true]} />
+      {/* Accent stripe on sidewall (colour ring near bead) */}
+      <mesh material={accentMat} position={[0, 0, 0.46]}>
+        <torusGeometry args={[1.02, 0.028, 16, 96]} />
       </mesh>
-
-      {/* Accent rings (sidewall colour stripe) */}
-      <mesh material={accentMat} position={[0, 0, 0.50]}>
-        <torusGeometry args={[0.955, 0.030, 16, 96]} />
+      <mesh material={accentMat} position={[0, 0, -0.46]}>
+        <torusGeometry args={[1.02, 0.028, 16, 96]} />
       </mesh>
-      <mesh material={accentMat} position={[0, 0, -0.50]}>
-        <torusGeometry args={[0.955, 0.030, 16, 96]} />
-      </mesh>
-      <mesh material={accentMat} position={[0, 0, 0.50]}>
+      {/* Thin inner accent ring */}
+      <mesh material={accentMat} position={[0, 0, 0.46]}>
         <torusGeometry args={[0.72, 0.012, 12, 96]} />
       </mesh>
-      <mesh material={accentMat} position={[0, 0, -0.50]}>
+      <mesh material={accentMat} position={[0, 0, -0.46]}>
         <torusGeometry args={[0.72, 0.012, 12, 96]} />
       </mesh>
 
       {/* Rim barrel */}
       <mesh material={rimMat} rotation={cylRot}>
-        <cylinderGeometry args={[0.92, 0.92, 0.98, 64, 1, false]} />
+        <cylinderGeometry args={[0.93, 0.93, 0.94, 64, 1, false]} />
       </mesh>
       {/* Rim face rings */}
-      <mesh material={rimMat} position={[0, 0, 0.49]}>
+      <mesh material={rimMat} position={[0, 0, 0.47]}>
         <torusGeometry args={[0.62, 0.28, 16, 64]} />
       </mesh>
-      <mesh material={rimMat} position={[0, 0, -0.49]}>
+      <mesh material={rimMat} position={[0, 0, -0.47]}>
         <torusGeometry args={[0.62, 0.28, 16, 64]} />
       </mesh>
 
@@ -202,19 +212,19 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
 
       {/* Hub cylinder */}
       <mesh material={rimMat} rotation={cylRot}>
-        <cylinderGeometry args={[0.18, 0.18, 1.06, 32]} />
+        <cylinderGeometry args={[0.18, 0.18, 1.00, 32]} />
       </mesh>
-      {/* Hub caps (accent) */}
-      <mesh material={accentMat} position={[0, 0, 0.53]} rotation={cylRot}>
+      {/* Hub caps */}
+      <mesh material={accentMat} position={[0, 0, 0.50]} rotation={cylRot}>
         <cylinderGeometry args={[0.17, 0.17, 0.02, 32]} />
       </mesh>
-      <mesh material={accentMat} position={[0, 0, -0.53]} rotation={cylRot}>
+      <mesh material={accentMat} position={[0, 0, -0.50]} rotation={cylRot}>
         <cylinderGeometry args={[0.17, 0.17, 0.02, 32]} />
       </mesh>
-      <mesh material={accentMat} position={[0, 0, 0.545]} rotation={cylRot}>
+      <mesh material={accentMat} position={[0, 0, 0.515]} rotation={cylRot}>
         <cylinderGeometry args={[0.07, 0.07, 0.01, 16]} />
       </mesh>
-      <mesh material={accentMat} position={[0, 0, -0.545]} rotation={cylRot}>
+      <mesh material={accentMat} position={[0, 0, -0.515]} rotation={cylRot}>
         <cylinderGeometry args={[0.07, 0.07, 0.01, 16]} />
       </mesh>
     </group>
@@ -224,7 +234,7 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
 function Lights({ accentColor }: { accentColor: string }) {
   return (
     <>
-      <ambientLight intensity={0.25} color="#eef0ff" />
+      <ambientLight intensity={0.28} color="#eef0ff" />
       <directionalLight position={[5, 8, 6]} intensity={3.5} color="#ffffff" />
       <directionalLight position={[-5, 2, 4]} intensity={0.8} color="#d0e0ff" />
       <directionalLight position={[1, -4, 3]} intensity={0.45} color="#c8d8ff" />

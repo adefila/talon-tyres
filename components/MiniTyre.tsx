@@ -6,17 +6,15 @@ import * as THREE from "three";
 
 function TyreMesh({ accentColor }: { accentColor: string }) {
   const groupRef = useRef<THREE.Group>(null!);
-  const rot = useRef({ x: 0.38, y: 0.0 });
-
-  const R = 1.44, T = 0.48;
+  const rot = useRef({ x: 0.42, y: 0.0 });
 
   const rubber = useMemo(() => new THREE.MeshStandardMaterial({
-    color: "#222232", roughness: 0.90, metalness: 0.03,
-    emissive: "#0a0a14", emissiveIntensity: 0.10,
+    color: "#1e1e2e", roughness: 0.88, metalness: 0.04,
+    emissive: "#090910", emissiveIntensity: 0.12,
   }), []);
 
   const grooveMat = useMemo(() => new THREE.MeshStandardMaterial({
-    color: "#07070f", roughness: 0.99, metalness: 0,
+    color: "#05050c", roughness: 0.99, metalness: 0,
   }), []);
 
   const rimMat = useMemo(() => new THREE.MeshStandardMaterial({
@@ -36,24 +34,40 @@ function TyreMesh({ accentColor }: { accentColor: string }) {
     color: "#040408", roughness: 0.97, metalness: 0.05,
   }), []);
 
-  /* ── Circumferential tread grooves ── */
+  /* ── Realistic car tyre profile ── */
+  const tyreProfile = useMemo<THREE.Vector2[]>(() => [
+    new THREE.Vector2(0.97, -0.48),
+    new THREE.Vector2(0.98, -0.43),
+    new THREE.Vector2(1.04, -0.43),
+    new THREE.Vector2(1.10, -0.46),
+    new THREE.Vector2(1.32, -0.45),
+    new THREE.Vector2(1.43, -0.40),
+    new THREE.Vector2(1.47, -0.32),
+    new THREE.Vector2(1.48, -0.16),
+    new THREE.Vector2(1.48,  0.00),
+    new THREE.Vector2(1.48,  0.16),
+    new THREE.Vector2(1.47,  0.32),
+    new THREE.Vector2(1.43,  0.40),
+    new THREE.Vector2(1.32,  0.45),
+    new THREE.Vector2(1.10,  0.46),
+    new THREE.Vector2(1.04,  0.43),
+    new THREE.Vector2(0.98,  0.43),
+    new THREE.Vector2(0.97,  0.48),
+  ], []);
+
+  /* ── 4 circumferential tread grooves ── */
   const treadGrooves = useMemo<ReactElement[]>(() => {
-    const positions = [
-      { r: R + T * Math.cos(50 * Math.PI/180) - 0.015, z: -T * Math.sin(50 * Math.PI/180) },
-      { r: R + T * Math.cos(20 * Math.PI/180) - 0.015, z: -T * Math.sin(20 * Math.PI/180) },
-      { r: R + T * Math.cos(20 * Math.PI/180) - 0.015, z:  T * Math.sin(20 * Math.PI/180) },
-      { r: R + T * Math.cos(50 * Math.PI/180) - 0.015, z:  T * Math.sin(50 * Math.PI/180) },
-    ];
-    return positions.map((p, i) => (
-      <mesh key={i} position={[0, 0, p.z]} material={grooveMat}>
-        <torusGeometry args={[p.r, 0.028, 8, 80]} />
+    const grooveZ = [-0.24, -0.08, 0.08, 0.24];
+    return grooveZ.map((z, i) => (
+      <mesh key={i} position={[0, 0, z]} material={grooveMat}>
+        <torusGeometry args={[1.472, 0.030, 8, 80]} />
       </mesh>
     ));
   }, [grooveMat]);
 
   /* ── 5 Spokes ── */
-  const spokes = useMemo<ReactElement[]>(() => {
-    return Array.from({ length: 5 }).map((_, i) => {
+  const spokes = useMemo<ReactElement[]>(() =>
+    Array.from({ length: 5 }).map((_, i) => {
       const a = (i / 5) * Math.PI * 2;
       return (
         <group key={i} rotation={[0, 0, a]}>
@@ -65,10 +79,9 @@ function TyreMesh({ accentColor }: { accentColor: string }) {
           </mesh>
         </group>
       );
-    });
-  }, [spokeMat, rimMat]);
+    }), [spokeMat, rimMat]);
 
-  /* ── Lug bolt holes (5 per face) ── */
+  /* ── Lug bolt holes ── */
   const lugHoles = useMemo<ReactElement[]>(() => {
     const holes: ReactElement[] = [];
     const lugR = 0.65;
@@ -78,11 +91,11 @@ function TyreMesh({ accentColor }: { accentColor: string }) {
       const x = Math.cos(a) * lugR;
       const y = Math.sin(a) * lugR;
       holes.push(
-        <mesh key={`lf${i}`} position={[x, y, 0.510]} rotation={cylRot} material={lugMat}>
-          <cylinderGeometry args={[0.057, 0.057, 0.04, 12]} />
+        <mesh key={`lf${i}`} position={[x, y, 0.485]} rotation={cylRot} material={lugMat}>
+          <cylinderGeometry args={[0.055, 0.055, 0.04, 12]} />
         </mesh>,
-        <mesh key={`lb${i}`} position={[x, y, -0.510]} rotation={cylRot} material={lugMat}>
-          <cylinderGeometry args={[0.057, 0.057, 0.04, 12]} />
+        <mesh key={`lb${i}`} position={[x, y, -0.485]} rotation={cylRot} material={lugMat}>
+          <cylinderGeometry args={[0.055, 0.055, 0.04, 12]} />
         </mesh>
       );
     }
@@ -100,34 +113,32 @@ function TyreMesh({ accentColor }: { accentColor: string }) {
 
   return (
     <group ref={groupRef} scale={[0.70, 0.70, 0.70]}>
-      {/* Outer tyre body */}
-      <mesh material={rubber}>
-        <torusGeometry args={[R, T, 24, 80]} />
+
+      {/* Tyre body: realistic LatheGeometry profile */}
+      <mesh material={rubber} rotation={cylRot}>
+        <latheGeometry args={[tyreProfile, 80]} />
       </mesh>
 
-      {/* Circumferential tread grooves */}
+      {/* Tread grooves */}
       {treadGrooves}
 
-      <mesh material={rubber} rotation={cylRot}>
-        <cylinderGeometry args={[0.96, 0.96, 0.96, 48, 1, true]} />
+      {/* Accent sidewall stripe */}
+      <mesh material={accentMat} position={[0, 0, 0.45]}>
+        <torusGeometry args={[1.02, 0.026, 14, 80]} />
+      </mesh>
+      <mesh material={accentMat} position={[0, 0, -0.45]}>
+        <torusGeometry args={[1.02, 0.026, 14, 80]} />
       </mesh>
 
-      {/* Accent rings */}
-      <mesh material={accentMat} position={[0, 0, 0.48]}>
-        <torusGeometry args={[0.95, 0.028, 14, 80]} />
-      </mesh>
-      <mesh material={accentMat} position={[0, 0, -0.48]}>
-        <torusGeometry args={[0.95, 0.028, 14, 80]} />
-      </mesh>
-
-      {/* Rim */}
+      {/* Rim barrel */}
       <mesh material={rimMat} rotation={cylRot}>
-        <cylinderGeometry args={[0.91, 0.91, 0.95, 48]} />
+        <cylinderGeometry args={[0.92, 0.92, 0.92, 48, 1, false]} />
       </mesh>
-      <mesh material={rimMat} position={[0, 0, 0.47]}>
+      {/* Rim faces */}
+      <mesh material={rimMat} position={[0, 0, 0.46]}>
         <torusGeometry args={[0.60, 0.27, 12, 56]} />
       </mesh>
-      <mesh material={rimMat} position={[0, 0, -0.47]}>
+      <mesh material={rimMat} position={[0, 0, -0.46]}>
         <torusGeometry args={[0.60, 0.27, 12, 56]} />
       </mesh>
 
@@ -139,19 +150,13 @@ function TyreMesh({ accentColor }: { accentColor: string }) {
 
       {/* Hub */}
       <mesh material={rimMat} rotation={cylRot}>
-        <cylinderGeometry args={[0.18, 0.18, 1.0, 24]} />
+        <cylinderGeometry args={[0.18, 0.18, 0.97, 24]} />
       </mesh>
-      <mesh material={accentMat} position={[0, 0, 0.50]} rotation={cylRot}>
+      <mesh material={accentMat} position={[0, 0, 0.49]} rotation={cylRot}>
         <cylinderGeometry args={[0.16, 0.16, 0.02, 24]} />
       </mesh>
-      <mesh material={accentMat} position={[0, 0, -0.50]} rotation={cylRot}>
+      <mesh material={accentMat} position={[0, 0, -0.49]} rotation={cylRot}>
         <cylinderGeometry args={[0.16, 0.16, 0.02, 24]} />
-      </mesh>
-      <mesh material={accentMat} position={[0, 0, 0.515]} rotation={cylRot}>
-        <cylinderGeometry args={[0.065, 0.065, 0.01, 16]} />
-      </mesh>
-      <mesh material={accentMat} position={[0, 0, -0.515]} rotation={cylRot}>
-        <cylinderGeometry args={[0.065, 0.065, 0.01, 16]} />
       </mesh>
     </group>
   );
@@ -165,7 +170,7 @@ export default function MiniTyre({ accentColor }: { accentColor: string }) {
       style={{ width: "100%", height: "100%", background: "transparent" }}
       onCreated={({ gl }) => { gl.setClearColor(0x000000, 0); }}
     >
-      <ambientLight intensity={0.40} color="#eef0ff" />
+      <ambientLight intensity={0.42} color="#eef0ff" />
       <directionalLight position={[4, 6, 5]} intensity={3.2} color="#f5f6ff" />
       <directionalLight position={[-4, -2, -3]} intensity={0.6} color="#3344cc" />
       <pointLight position={[0, 0, -5]} intensity={2.0} color={accentColor} distance={12} />
