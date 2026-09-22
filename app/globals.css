@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #0A0A14;
+  --red: #CC0000;
+  --red-dark: #A30000;
+  --navy: #0D0F1C;
+  --navy-light: #151828;
+  --gray: #6B7280;
+  --gray-light: #F5F5F5;
+  --border: #E5E7EB;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-red: var(--red);
+  --color-navy: var(--navy);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-barlow);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--red);
+  color: white;
+}
+
+.font-display {
+  font-family: var(--font-barlow), 'Barlow Condensed', sans-serif;
+}
