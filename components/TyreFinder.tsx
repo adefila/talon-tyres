@@ -6,29 +6,72 @@ import { ArrowUpRight } from "lucide-react";
 
 const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
-function AnimatedCheck({ delay = 0 }: { delay?: number }) {
+/* Rive-style animated check: circle scales in, tick draws, brief spring bounce */
+function AnimatedCheck({ delay = 0, inView }: { delay?: number; inView: boolean }) {
   return (
-    <svg viewBox="0 0 22 22" width="22" height="22" className="shrink-0" aria-hidden="true">
-      <circle cx="11" cy="11" r="10" fill="none" stroke="#E5E7EB" strokeWidth="1.5" />
-      <path
-        d="M6 11.5L9.5 15L16 8"
+    <motion.svg
+      viewBox="0 0 26 26"
+      width="26"
+      height="26"
+      className="shrink-0"
+      aria-hidden="true"
+      initial="hidden"
+      animate={inView ? "visible" : "hidden"}
+    >
+      {/* Background circle — scales in with spring */}
+      <motion.circle
+        cx="13" cy="13" r="12"
+        fill="#F3F4F6"
+        stroke="none"
+        variants={{
+          hidden: { scale: 0, opacity: 0 },
+          visible: {
+            scale: 1,
+            opacity: 1,
+            transition: { delay, duration: 0.35, type: "spring", stiffness: 300, damping: 20 },
+          },
+        }}
+        style={{ originX: "13px", originY: "13px" }}
+      />
+      {/* Outer ring — draws itself */}
+      <motion.circle
+        cx="13" cy="13" r="12"
         fill="none"
-        stroke="#0A0A14"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeDasharray="24"
-        strokeDashoffset="24"
-        style={{
-          animation: `talon-check-draw 0.45s ${delay}s cubic-bezier(0.22,1,0.36,1) forwards`,
+        stroke="#D1D5DB"
+        strokeWidth="1.5"
+        pathLength={1}
+        variants={{
+          hidden: { pathLength: 0, opacity: 0 },
+          visible: {
+            pathLength: 1,
+            opacity: 1,
+            transition: { delay, duration: 0.5, ease: "easeOut" },
+          },
         }}
       />
-      <style>{`
-        @keyframes talon-check-draw {
-          to { stroke-dashoffset: 0; }
-        }
-      `}</style>
-    </svg>
+      {/* Tick mark — draws with slight delay after ring */}
+      <motion.path
+        d="M7.5 13L11 16.5L18.5 9"
+        fill="none"
+        stroke="#111827"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        pathLength={1}
+        variants={{
+          hidden: { pathLength: 0, opacity: 0 },
+          visible: {
+            pathLength: 1,
+            opacity: 1,
+            transition: {
+              delay: delay + 0.28,
+              duration: 0.38,
+              ease: [0.22, 1, 0.36, 1],
+            },
+          },
+        }}
+      />
+    </motion.svg>
   );
 }
 
@@ -105,12 +148,12 @@ export default function TyreFinder() {
 
             <div className="flex flex-col gap-3">
               {[
-                { text: "Guaranteed vehicle fitment", delay: 0.3 },
-                { text: "Over 240 size configurations", delay: 0.5 },
-                { text: "Free delivery on all orders", delay: 0.7 },
+                { text: "Guaranteed vehicle fitment", delay: 0.55 },
+                { text: "Over 240 size configurations", delay: 0.75 },
+                { text: "Free delivery on all orders", delay: 0.95 },
               ].map((item) => (
                 <div key={item.text} className="flex items-center gap-2.5">
-                  <AnimatedCheck delay={item.delay} />
+                  <AnimatedCheck delay={item.delay} inView={inView} />
                   <span className="text-[13px] text-[#374151] font-medium">{item.text}</span>
                 </div>
               ))}

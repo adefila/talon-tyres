@@ -32,7 +32,7 @@ function TyreMesh({ accentColor }: { accentColor: string }) {
   }), []);
 
   const spokeMat = useMemo(() => new THREE.MeshStandardMaterial({
-    color: "#C0C8D8", roughness: 0.12, metalness: 0.96, envMapIntensity: 1.4,
+    color: "#D0D8E8", roughness: 0.28, metalness: 0.62,
   }), []);
 
   const accentMat = useMemo(() => new THREE.MeshStandardMaterial({
@@ -190,13 +190,14 @@ export default function MiniTyre({ accentColor }: { accentColor: string }) {
       style={{ width: "100%", height: "100%", background: "transparent" }}
       onCreated={({ gl }) => { gl.setClearColor(0x000000, 0); }}
     >
-      <ambientLight intensity={0.28} color="#eef0ff" />
-      <directionalLight position={[5, 8, 6]}  intensity={3.8} color="#ffffff" />
-      <directionalLight position={[-4, -2, -3]} intensity={0.60} color="#3344cc" />
-      <pointLight position={[0, 0, -5]}  intensity={2.4} color={accentColor} distance={12} />
-      <pointLight position={[-6, 1, 0]}  intensity={2.4} color="#b8ccff"    distance={12} />
-      <pointLight position={[6, 1, 0]}   intensity={2.0} color="#ffffff"    distance={12} />
-      <pointLight position={[0, 5, 4]}   intensity={1.4} color="#ffffff"    distance={10} />
+      <ambientLight intensity={0.80} color="#e8eeff" />
+      <directionalLight position={[5, 8, 6]}   intensity={4.5} color="#ffffff" />
+      <directionalLight position={[-5, 3, 4]}  intensity={1.2} color="#ccd8ff" />
+      <directionalLight position={[1, -4, 2]}  intensity={0.8} color="#d0d8ff" />
+      <pointLight position={[0, 0, -5]}  intensity={2.0} color={accentColor} distance={12} />
+      <pointLight position={[-5, 2, 1]}  intensity={3.0} color="#c8d8ff"    distance={14} />
+      <pointLight position={[5, 2, 1]}   intensity={2.5} color="#ffffff"    distance={14} />
+      <pointLight position={[0, 0, 5]}   intensity={2.8} color="#ffffff"    distance={10} />
       <TyreMesh accentColor={accentColor} />
     </Canvas>
   );

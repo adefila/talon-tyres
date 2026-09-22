@@ -89,9 +89,8 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
   // Machined/polished spoke face — driven by rimColor prop
   const spokeMat = useMemo(() => new THREE.MeshStandardMaterial({
     color: rimColor,
-    roughness: rimRoughness,
-    metalness: rimRoughness < 0.45 ? 0.96 : 0.58,
-    envMapIntensity: 1.4,
+    roughness: Math.max(rimRoughness, 0.22),   // keep enough roughness for diffuse visibility
+    metalness: rimRoughness < 0.45 ? 0.72 : 0.55,
   }), [rimColor, rimRoughness]);
 
   const accentMat = useMemo(() => new THREE.MeshStandardMaterial({
