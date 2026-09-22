@@ -6,6 +6,32 @@ import { ArrowUpRight } from "lucide-react";
 
 const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
+function AnimatedCheck({ delay = 0 }: { delay?: number }) {
+  return (
+    <svg viewBox="0 0 22 22" width="22" height="22" className="shrink-0" aria-hidden="true">
+      <circle cx="11" cy="11" r="10" fill="none" stroke="#E5E7EB" strokeWidth="1.5" />
+      <path
+        d="M6 11.5L9.5 15L16 8"
+        fill="none"
+        stroke="#0A0A14"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeDasharray="24"
+        strokeDashoffset="24"
+        style={{
+          animation: `talon-check-draw 0.45s ${delay}s cubic-bezier(0.22,1,0.36,1) forwards`,
+        }}
+      />
+      <style>{`
+        @keyframes talon-check-draw {
+          to { stroke-dashoffset: 0; }
+        }
+      `}</style>
+    </svg>
+  );
+}
+
 const makes = ["BMW", "Audi", "Mercedes", "Toyota", "Ford", "Honda", "Volkswagen", "Volvo", "Land Rover", "Mazda"];
 const models: Record<string, string[]> = {
   BMW: ["1 Series", "2 Series", "3 Series", "4 Series", "5 Series", "7 Series", "X3", "X5", "X7"],
@@ -79,14 +105,12 @@ export default function TyreFinder() {
 
             <div className="flex flex-col gap-3">
               {[
-                { icon: "✓", text: "Guaranteed vehicle fitment" },
-                { icon: "✓", text: "Over 240 size configurations" },
-                { icon: "✓", text: "Free delivery on all orders" },
+                { text: "Guaranteed vehicle fitment", delay: 0.3 },
+                { text: "Over 240 size configurations", delay: 0.5 },
+                { text: "Free delivery on all orders", delay: 0.7 },
               ].map((item) => (
                 <div key={item.text} className="flex items-center gap-2.5">
-                  <span className="w-5 h-5 bg-[#CC0000] flex items-center justify-center text-[9px] text-white font-bold shrink-0">
-                    {item.icon}
-                  </span>
+                  <AnimatedCheck delay={item.delay} />
                   <span className="text-[13px] text-[#374151] font-medium">{item.text}</span>
                 </div>
               ))}

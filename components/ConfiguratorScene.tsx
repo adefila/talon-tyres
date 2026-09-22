@@ -110,7 +110,7 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
   const spokeGeo = useMemo(() => {
     const shape = buildSpokeShape();
     return new THREE.ExtrudeGeometry(shape, {
-      depth: 0.210,
+      depth: 0.920,   // full rim depth: from z=-0.460 to z=+0.460
       bevelEnabled: true,
       bevelSize: 0.007,
       bevelThickness: 0.007,
@@ -177,8 +177,8 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
   });
 
   const cylRot: [number, number, number] = [Math.PI / 2, 0, 0];
-  const WHEEL_DEPTH = 0.210; // extrusion depth of spoke
-  const HALF_DEPTH = WHEEL_DEPTH / 2;
+  // Spokes span the full rim depth (z=-0.460 to z=+0.460 = 0.920 total)
+  const HALF_DEPTH = 0.460;
 
   return (
     <group ref={groupRef} scale={[0.80, 0.80, 0.80]}>

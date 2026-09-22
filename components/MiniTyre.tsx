@@ -73,7 +73,7 @@ function TyreMesh({ accentColor }: { accentColor: string }) {
   const spokeGeo = useMemo(() => {
     const shape = buildSpokeShape();
     return new THREE.ExtrudeGeometry(shape, {
-      depth: 0.200,
+      depth: 0.920,   // full rim depth
       bevelEnabled: true,
       bevelSize: 0.006,
       bevelThickness: 0.006,
@@ -101,7 +101,7 @@ function TyreMesh({ accentColor }: { accentColor: string }) {
   });
 
   const cylRot: [number, number, number] = [Math.PI / 2, 0, 0];
-  const HALF_DEPTH = 0.100;
+  const HALF_DEPTH = 0.460; // spokes span full rim depth
 
   return (
     <group ref={groupRef} scale={[0.70, 0.70, 0.70]}>
