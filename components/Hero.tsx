@@ -39,7 +39,7 @@ function SplitHeadline({ lines }: { lines: string[][] }) {
       variants={wordContainer}
       initial="hidden"
       animate="show"
-      className="text-[56px] sm:text-[68px] lg:text-[82px] font-bold uppercase leading-[0.95] tracking-[-0.025em] text-white mb-8"
+      className="text-[64px] sm:text-[80px] lg:text-[100px] font-bold uppercase leading-[0.92] tracking-[-0.03em] text-white mb-8"
     >
       {lines.map((lineWords, li) => (
         <span key={li} className="block overflow-hidden">

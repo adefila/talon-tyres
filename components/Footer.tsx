@@ -26,7 +26,6 @@ const footerLinks = {
   ],
 };
 
-/* Social icon SVGs */
 const socials = [
   {
     name: "X (Twitter)",
@@ -79,25 +78,24 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <div className="mb-6">
               <Image
-                src="/logo.png"
+                src="/logo.svg"
                 alt="TALON Tyres"
-                width={130}
-                height={42}
-                className="h-[38px] w-auto object-contain brightness-0 invert"
+                width={120}
+                height={20}
+                className="h-[26px] w-auto brightness-0 invert"
               />
             </div>
             <p className="text-[16px] text-white/40 leading-relaxed max-w-xs mb-8">
               Engineered for every turn. TALON precision-crafted tyres are trusted by performance drivers, fleet operators, and weekend warriors across 50+ countries.
             </p>
 
-            {/* Real social media icons */}
             <div className="flex items-center gap-3">
               {socials.map((s) => (
                 <a
                   key={s.name}
                   href={s.href}
                   aria-label={s.name}
-                  className="w-9 h-9 border border-white/10 flex items-center justify-center text-white/40 hover:border-[#CC0000] hover:text-[#CC0000] transition-colors"
+                  className="w-9 h-9 border border-white/10 flex items-center justify-center text-white/40 hover:border-[#EE2846] hover:text-[#EE2846] transition-colors"
                 >
                   {s.icon}
                 </a>
@@ -142,22 +140,20 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* ── Giant watermark — standalone block at very bottom ── */}
+      {/* ── Giant SVG logo watermark ── */}
       <div
-        className="w-full flex items-end justify-center overflow-hidden pointer-events-none select-none"
+        className="w-full overflow-hidden pointer-events-none select-none flex items-end justify-center"
         aria-hidden="true"
-        style={{ height: "clamp(120px, 18vw, 280px)" }}
+        style={{ height: "clamp(80px, 12vw, 180px)" }}
       >
-        <span
-          className="font-black italic leading-none tracking-[-0.04em] text-white block"
-          style={{
-            fontSize: "clamp(160px, 30vw, 440px)",
-            opacity: 0.055,
-            lineHeight: 0.82,
-          }}
-        >
-          TALON
-        </span>
+        <Image
+          src="/logo.svg"
+          alt=""
+          width={1200}
+          height={200}
+          className="w-[clamp(600px,90vw,1300px)] h-auto object-contain brightness-0 invert"
+          style={{ opacity: 0.06 }}
+        />
       </div>
     </footer>
   );
