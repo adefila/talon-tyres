@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import TalonLogo from "./TalonLogo";
 
 const footerLinks = {
   Products: [
@@ -77,13 +77,7 @@ export default function Footer() {
           {/* Brand column */}
           <div className="lg:col-span-2">
             <div className="mb-6">
-              <Image
-                src="/logo.svg"
-                alt="TALON Tyres"
-                width={120}
-                height={20}
-                className="h-[26px] w-auto brightness-0 invert"
-              />
+              <TalonLogo color="white" className="h-[26px] w-auto" />
             </div>
             <p className="text-[16px] text-white/40 leading-relaxed max-w-xs mb-8">
               Engineered for every turn. TALON precision-crafted tyres are trusted by performance drivers, fleet operators, and weekend warriors across 50+ countries.
@@ -142,17 +136,14 @@ export default function Footer() {
 
       {/* ── Giant SVG logo watermark ── */}
       <div
-        className="w-full overflow-hidden pointer-events-none select-none flex items-end justify-center"
+        className="w-full overflow-hidden pointer-events-none select-none flex items-end justify-center pb-2"
         aria-hidden="true"
         style={{ height: "clamp(80px, 12vw, 180px)" }}
       >
-        <Image
-          src="/logo.svg"
-          alt=""
-          width={1200}
-          height={200}
-          className="w-[clamp(600px,90vw,1300px)] h-auto object-contain brightness-0 invert"
-          style={{ opacity: 0.06 }}
+        <TalonLogo
+          color="white"
+          className="w-[clamp(600px,90vw,1300px)] h-auto"
+          style={{ opacity: 0.055 } as React.CSSProperties}
         />
       </div>
     </footer>

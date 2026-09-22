@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import Image from "next/image";
+import TalonLogo from "./TalonLogo";
 
 const megaItems = [
   {
@@ -76,17 +76,9 @@ export default function Navbar() {
         }`}
       >
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12 flex items-center justify-between h-[72px]">
-          {/* SVG Logo */}
-          <Link href="/" className="flex items-center shrink-0">
-            <Image
-              src="/logo.svg"
-              alt="TALON Tyres"
-              width={110}
-              height={18}
-              className="h-[22px] w-auto"
-              priority
-              style={{ color: "#EE2846" }}
-            />
+          {/* SVG Logo — red on white navbar */}
+          <Link href="/" className="flex items-center shrink-0" aria-label="TALON Tyres">
+            <TalonLogo color="#EE2846" className="h-[22px] w-auto" />
           </Link>
 
           {/* Desktop Nav */}
@@ -189,7 +181,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed top-[72px] left-0 right-0 z-40 bg-[#0A0A14] border-b border-white/10 shadow-2xl"
+            className="fixed top-[72px] left-0 right-0 z-40 bg-white border-b border-[#E5E7EB] shadow-xl"
             onMouseEnter={openMega}
             onMouseLeave={closeMega}
           >
@@ -201,14 +193,14 @@ export default function Navbar() {
                   <span className="text-[9px] font-bold tracking-[0.32em] uppercase text-[#CC0000] block mb-1">
                     Our Collection
                   </span>
-                  <p className="text-[13px] text-white/40">
+                  <p className="text-[13px] text-[#9CA3AF]">
                     Four precision-engineered lines — city to trail.
                   </p>
                 </div>
                 <a
                   href="#products"
                   onClick={() => setMegaOpen(false)}
-                  className="group flex items-center gap-2 text-[11px] font-bold tracking-[0.15em] uppercase text-white/50 hover:text-white transition-colors"
+                  className="group flex items-center gap-2 text-[11px] font-bold tracking-[0.15em] uppercase text-[#6B7280] hover:text-[#0A0A14] transition-colors"
                 >
                   View Full Range
                   <span className="transition-transform group-hover:translate-x-0.5">→</span>
@@ -216,18 +208,18 @@ export default function Navbar() {
               </div>
 
               {/* 4-column tyre grid */}
-              <div className="grid grid-cols-4 gap-px bg-white/[0.06]">
+              <div className="grid grid-cols-4 gap-px bg-[#E5E7EB]">
                 {megaItems.map((item) => (
                   <a
                     key={item.label}
                     href="#products"
                     onClick={() => setMegaOpen(false)}
-                    className="group bg-[#0A0A14] px-5 py-5 flex flex-col gap-3 hover:bg-white/[0.05] transition-colors"
+                    className="group bg-white px-5 py-5 flex flex-col gap-3 hover:bg-[#F9F9FB] transition-colors"
                   >
                     {/* Accent dot + label */}
                     <div className="flex items-center gap-2.5">
                       <span
-                        className="w-2.5 h-2.5 rounded-full shrink-0"
+                        className="w-2 h-2 rounded-full shrink-0"
                         style={{ background: item.color }}
                       />
                       <span
@@ -240,10 +232,10 @@ export default function Navbar() {
 
                     {/* Product name */}
                     <div>
-                      <div className="text-[15px] font-bold text-white tracking-tight leading-tight group-hover:text-white transition-colors">
+                      <div className="text-[15px] font-bold text-[#0A0A14] tracking-tight leading-tight">
                         {item.name}
                       </div>
-                      <div className="text-[12px] text-white/40 mt-1.5 leading-relaxed">
+                      <div className="text-[12px] text-[#9CA3AF] mt-1.5 leading-relaxed">
                         {item.desc}
                       </div>
                     </div>
@@ -252,14 +244,14 @@ export default function Navbar() {
                     <div className="mt-auto">
                       <span
                         className="text-[9px] font-bold tracking-[0.18em] uppercase px-2.5 py-1 inline-block"
-                        style={{ background: `${item.color}22`, color: item.color, border: `1px solid ${item.color}44` }}
+                        style={{ background: `${item.color}12`, color: item.color, border: `1px solid ${item.color}30` }}
                       >
                         {item.stat}
                       </span>
                     </div>
 
                     {/* Hover arrow */}
-                    <div className="flex items-center gap-1.5 text-white/20 group-hover:text-white/60 transition-colors">
+                    <div className="flex items-center gap-1.5 text-[#D1D5DB] group-hover:text-[#6B7280] transition-colors">
                       <span className="text-[10px] font-semibold tracking-[0.12em] uppercase">Configure</span>
                       <span className="text-[10px] transition-transform group-hover:translate-x-0.5">→</span>
                     </div>
