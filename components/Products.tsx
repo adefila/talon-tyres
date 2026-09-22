@@ -109,6 +109,13 @@ export default function Products() {
 
               {/* 3D Tyre canvas area */}
               <div className="relative bg-[#0D0F1C] group-hover:bg-[#080810] transition-colors duration-500 flex items-center justify-center h-[200px] overflow-hidden">
+                {/* Radial glow for tyre visibility */}
+                <div
+                  className="absolute inset-0 pointer-events-none z-0"
+                  style={{
+                    background: `radial-gradient(ellipse 65% 65% at 50% 50%, ${p.accentColor}22 0%, ${p.accentColor}0a 50%, transparent 72%)`,
+                  }}
+                />
                 {/* Background number watermark */}
                 <span className="absolute bottom-2 right-3 text-[80px] font-black leading-none text-white/[0.03] select-none">
                   {p.id}

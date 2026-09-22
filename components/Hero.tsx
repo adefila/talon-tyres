@@ -66,7 +66,15 @@ export default function Hero() {
         className="absolute inset-0 flex items-center justify-end pointer-events-none"
         aria-hidden="true"
       >
-        <div className="w-[680px] h-[680px] lg:w-[920px] lg:h-[920px] translate-x-[6%] lg:translate-x-[2%]">
+        <div className="relative w-[680px] h-[680px] lg:w-[920px] lg:h-[920px] translate-x-[6%] lg:translate-x-[2%]">
+          {/* Radial glow so dark rubber reads against dark bg */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(ellipse 62% 62% at 50% 50%, rgba(60,20,20,0.55) 0%, rgba(30,10,10,0.25) 45%, transparent 72%)",
+            }}
+          />
           <TyreScene />
         </div>
       </motion.div>

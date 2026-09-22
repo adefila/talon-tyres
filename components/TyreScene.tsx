@@ -188,15 +188,18 @@ function Tyre3D() {
 function Lights() {
   return (
     <>
-      <ambientLight intensity={0.12} color="#b0c0ff" />
-      {/* Key light — upper left, warm */}
-      <directionalLight position={[3, 5, 4]} intensity={1.8} color="#f0f0ff" />
-      {/* Fill light — lower right, cool */}
-      <directionalLight position={[-4, -2, -3]} intensity={0.5} color="#2233aa" />
-      {/* Red accent backlight */}
-      <pointLight position={[0, 0, -3]} intensity={1.2} color="#CC0000" distance={7} />
-      {/* Rim highlight — rim reflections */}
-      <pointLight position={[2, 2, 3]} intensity={0.9} color="#ffffff" distance={6} />
+      <ambientLight intensity={0.55} color="#c8d4ff" />
+      <directionalLight position={[3, 5, 4]} intensity={2.4} color="#f5f6ff" />
+      <directionalLight position={[-4, -2, -3]} intensity={0.9} color="#3344cc" />
+      {/* Red rim backlight */}
+      <pointLight position={[0, 0, -4]} intensity={2.2} color="#CC0000" distance={9} />
+      {/* Front-right key */}
+      <pointLight position={[3, 1, 3]} intensity={1.6} color="#ffffff" distance={8} />
+      {/* Front-left fill */}
+      <pointLight position={[-3, 0, 2.5]} intensity={1.0} color="#aabfff" distance={7} />
+      {/* Side rim lights for silhouette */}
+      <pointLight position={[-3, 0, -1.5]} intensity={3.0} color="#e8eeff" distance={9} />
+      <pointLight position={[3, 0, -1.5]} intensity={2.4} color="#ddeeff" distance={9} />
     </>
   );
 }

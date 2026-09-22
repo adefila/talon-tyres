@@ -186,11 +186,14 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
 function Lights() {
   return (
     <>
-      <ambientLight intensity={0.12} color="#c0d0ff" />
-      <directionalLight position={[4, 6, 5]} intensity={2.0} color="#f0f2ff" />
-      <directionalLight position={[-5, -2, -4]} intensity={0.5} color="#1133bb" />
-      <pointLight position={[0, 0, -3.5]} intensity={1.4} color="#CC0000" distance={8} />
-      <pointLight position={[3, 2, 3]} intensity={0.9} color="#ffffff" distance={6} />
+      <ambientLight intensity={0.55} color="#c8d4ff" />
+      <directionalLight position={[4, 6, 5]} intensity={2.4} color="#f5f6ff" />
+      <directionalLight position={[-5, -2, -4]} intensity={0.9} color="#2244cc" />
+      <pointLight position={[0, 0, -4]} intensity={2.2} color="#CC0000" distance={10} />
+      <pointLight position={[3, 1, 3]} intensity={1.6} color="#ffffff" distance={8} />
+      <pointLight position={[-3, 0, 2.5]} intensity={1.0} color="#aabfff" distance={7} />
+      <pointLight position={[-3.5, 0, -1.5]} intensity={3.0} color="#e8eeff" distance={10} />
+      <pointLight position={[3.5, 0, -1.5]} intensity={2.4} color="#ddeeff" distance={10} />
     </>
   );
 }

@@ -86,11 +86,13 @@ export default function MiniTyre({ accentColor }: { accentColor: string }) {
       gl={{ antialias: true, alpha: true }}
       style={{ width: "100%", height: "100%", background: "transparent" }}
     >
-      <ambientLight intensity={0.10} color="#c0d0ff" />
-      <directionalLight position={[3, 5, 4]} intensity={1.8} color="#f0f2ff" />
-      <directionalLight position={[-4, -2, -3]} intensity={0.5} color="#2233aa" />
-      <pointLight position={[0, 0, -3]} intensity={1.2} color={accentColor} distance={7} />
-      <pointLight position={[2, 2, 3]} intensity={0.7} color="#ffffff" distance={5} />
+      <ambientLight intensity={0.55} color="#c8d4ff" />
+      <directionalLight position={[3, 5, 4]} intensity={2.4} color="#f5f6ff" />
+      <directionalLight position={[-4, -2, -3]} intensity={0.9} color="#3344cc" />
+      <pointLight position={[0, 0, -3.5]} intensity={2.0} color={accentColor} distance={8} />
+      <pointLight position={[2, 1, 2.5]} intensity={1.4} color="#ffffff" distance={6} />
+      <pointLight position={[-2.5, 0, -1.2]} intensity={2.8} color="#e8eeff" distance={8} />
+      <pointLight position={[2.5, 0, -1.2]} intensity={2.2} color="#ddeeff" distance={8} />
       <TyreMesh accentColor={accentColor} />
     </Canvas>
   );
