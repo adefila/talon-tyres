@@ -256,61 +256,68 @@ export default function Navbar() {
             onMouseEnter={openMega}
             onMouseLeave={closeMega}
           >
-            <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-8">
-              <div className="grid lg:grid-cols-[300px_1fr] gap-8">
+            <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-10">
+              <div className="grid lg:grid-cols-[260px_1fr] gap-10 items-stretch">
 
-                {/* Left: Car image panel */}
-                <div className="bg-[#0A0A14] p-6 flex flex-col justify-between">
+                {/* Left: Editorial brand panel */}
+                <div className="bg-[#0A0A14] p-7 flex flex-col justify-between min-h-[220px]">
                   <div>
-                    <span className="text-[9px] font-bold tracking-[0.32em] uppercase text-[#CC0000] block mb-1">
+                    <span className="text-[8px] font-bold tracking-[0.38em] uppercase text-[#CC0000] block mb-3">
                       TALON Collection
                     </span>
-                    <p className="text-[13px] font-semibold text-white leading-tight mt-2">
+                    <p className="text-[22px] font-bold text-white leading-[1.1] tracking-tight">
                       City to Trail.
-                      <br />
-                      <span className="text-white/50 font-normal">Four lines. One obsession.</span>
+                    </p>
+                    <p className="text-[13px] text-white/40 mt-2 leading-relaxed">
+                      Driven by innovation. Trusted for reliability.
                     </p>
                   </div>
-                  <div className="mt-4">
+                  <div className="mt-5">
                     <MegaCarSVG />
                   </div>
+                  <a
+                    href="#configure"
+                    onClick={() => setMegaOpen(false)}
+                    className="mt-5 inline-flex items-center bg-[#CC0000] text-white text-[10px] font-bold tracking-[0.18em] uppercase px-5 py-3 hover:bg-white hover:text-[#CC0000] transition-colors duration-200 self-start"
+                    style={{ transform: "skewX(-6deg)" }}
+                  >
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: "7px", transform: "skewX(6deg)" }}>
+                      Build Your Set
+                      <ArrowUpRight size={12} />
+                    </span>
+                  </a>
                 </div>
 
-                {/* Right: Product columns */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-0 border border-[#F0F0F0]">
+                {/* Right: Product lines — editorial columns, no boxes */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 pt-1">
                   {megaItems.map((item) => (
                     <a
                       key={item.label}
                       href="#products"
                       onClick={() => setMegaOpen(false)}
-                      className="group px-5 py-5 flex flex-col gap-3 hover:bg-[#F9F9FB] transition-colors border-r border-[#F0F0F0] last:border-r-0"
+                      className="group flex flex-col gap-3 border-t-2 pt-5 hover:opacity-75 transition-opacity"
+                      style={{ borderColor: item.color }}
                     >
-                      {/* Accent dot + label */}
-                      <div className="flex items-center gap-2.5">
-                        <span className="w-2 h-2 rounded-full shrink-0" style={{ background: item.color }} />
-                        <span className="text-[9px] font-bold tracking-[0.24em] uppercase" style={{ color: item.color }}>
-                          {item.label}
-                        </span>
+                      <span
+                        className="text-[8px] font-bold tracking-[0.3em] uppercase"
+                        style={{ color: item.color }}
+                      >
+                        {item.label}
+                      </span>
+                      <div className="text-[17px] font-bold text-[#0A0A14] tracking-tight leading-tight">
+                        {item.name}
                       </div>
-
-                      {/* Name + desc */}
-                      <div>
-                        <div className="text-[15px] font-bold text-[#0A0A14] tracking-tight leading-tight">
-                          {item.name}
-                        </div>
-                        <div className="text-[12px] text-[#6B7280] mt-1.5 leading-relaxed">
-                          {item.desc}
-                        </div>
+                      <div className="text-[12px] text-[#6B7280] leading-relaxed flex-1">
+                        {item.desc}
                       </div>
-
-                      {/* Hover arrow */}
-                      <div className="mt-auto flex items-center gap-1.5 text-[#D1D5DB] group-hover:text-[#6B7280] transition-colors">
-                        <span className="text-[10px] font-semibold tracking-[0.12em] uppercase">Configure</span>
+                      <div className="flex items-center gap-1.5 text-[#0A0A14] group-hover:gap-2.5 transition-all duration-200 mt-1">
+                        <span className="text-[10px] font-semibold tracking-[0.14em] uppercase">Explore</span>
                         <ArrowUpRight size={11} />
                       </div>
                     </a>
                   ))}
                 </div>
+
               </div>
             </div>
           </motion.div>

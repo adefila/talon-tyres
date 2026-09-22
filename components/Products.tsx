@@ -49,7 +49,7 @@ const products = [
     category: "Winter",
     tagline: "Biting-edge sipes engineered for confidence on ice and snow.",
     specs: ["195/65 R15", "205/55 R16", "225/45 R18"],
-    stat: { val: "−40°C", label: "Operating Range" },
+    stat: { val: "-40°C", label: "Operating Range" },
     badge: null,
     accentColor: "#0EA5E9",
     makes: ["Volvo XC90", "BMW X5", "Audi Q7"],
@@ -110,16 +110,17 @@ export default function Products() {
               initial={{ opacity: 0, y: 28 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.08, duration: 0.6, ease }}
-              className="group relative flex flex-col border border-[#E5E7EB] hover:border-[#D1D5DB] transition-colors duration-300 cursor-pointer overflow-hidden"
+              className="group relative border border-[#E5E7EB] hover:border-[#D1D5DB] transition-colors duration-300 cursor-pointer overflow-hidden"
+              style={{ height: "390px" }}
             >
               {/* Left accent bar */}
               <div
-                className="absolute left-0 top-0 bottom-0 w-[3px] z-10"
+                className="absolute left-0 top-0 bottom-0 w-[3px] z-20"
                 style={{ background: p.accentColor }}
               />
 
               {/* 3D Tyre on white background */}
-              <div className="relative bg-white flex items-center justify-center h-[210px] overflow-hidden pl-[3px]">
+              <div className="relative bg-white flex items-center justify-center overflow-hidden pl-[3px]" style={{ height: "210px" }}>
                 {p.badge && (
                   <div
                     className="absolute top-3 right-3 text-[9px] font-bold tracking-[0.18em] uppercase px-2.5 py-1 text-white z-20"
@@ -156,13 +157,15 @@ export default function Products() {
                 </p>
               </div>
 
-              {/* Hover-reveal content */}
-              <div className="px-5 pb-5 pl-6 overflow-hidden max-h-0 opacity-0 group-hover:max-h-[260px] group-hover:opacity-100 transition-[max-height,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
-                <div className="border-t border-[#F0F0F0] pt-3 mb-3">
+              {/* Sliding overlay — slides up from bottom, fixed height */}
+              <div
+                className="absolute inset-x-0 bottom-0 bg-white border-t border-[#E5E7EB] px-5 pb-5 pl-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500 z-10"
+                style={{ transitionTimingFunction: "cubic-bezier(0.22,1,0.36,1)" }}
+              >
+                <div className="pt-4 mb-3">
                   <p className="text-[13px] text-[#374151] leading-relaxed">{p.tagline}</p>
                 </div>
 
-                {/* Key stat */}
                 <div className="flex items-baseline gap-2 mb-3">
                   <span className="text-[24px] font-black text-[#0A0A14] tracking-tight leading-none">
                     {p.stat.val}
@@ -172,7 +175,6 @@ export default function Products() {
                   </span>
                 </div>
 
-                {/* Size chips */}
                 <div className="flex flex-wrap gap-1.5 mb-4">
                   {p.specs.map((s) => (
                     <span
@@ -184,7 +186,6 @@ export default function Products() {
                   ))}
                 </div>
 
-                {/* Configure CTA */}
                 <a
                   href="#configure"
                   className="inline-flex items-center text-white text-[10px] font-bold tracking-[0.18em] uppercase px-5 py-3 transition-opacity duration-200 hover:opacity-85"
