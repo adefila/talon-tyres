@@ -240,20 +240,6 @@ export default function TyreConfigurator() {
           >
             {/* Canvas */}
             <div className="relative aspect-square w-full">
-              {/* Radial glow — makes dark rubber visible on dark bg */}
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`glow-${activeType}`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="absolute inset-0 pointer-events-none z-0"
-                  style={{
-                    background: `radial-gradient(ellipse 62% 62% at 50% 50%, ${tyre.accentColor}30 0%, ${tyre.accentColor}10 45%, transparent 70%)`,
-                  }}
-                />
-              </AnimatePresence>
               <AnimatePresence mode="wait">
                 <motion.div
                   key={`${activeType}-${activeRim}`}

@@ -186,14 +186,20 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness }: TyreProps) {
 function Lights() {
   return (
     <>
-      <ambientLight intensity={0.55} color="#c8d4ff" />
-      <directionalLight position={[4, 6, 5]} intensity={2.4} color="#f5f6ff" />
-      <directionalLight position={[-5, -2, -4]} intensity={0.9} color="#2244cc" />
-      <pointLight position={[0, 0, -4]} intensity={2.2} color="#CC0000" distance={10} />
-      <pointLight position={[3, 1, 3]} intensity={1.6} color="#ffffff" distance={8} />
-      <pointLight position={[-3, 0, 2.5]} intensity={1.0} color="#aabfff" distance={7} />
-      <pointLight position={[-3.5, 0, -1.5]} intensity={3.0} color="#e8eeff" distance={10} />
-      <pointLight position={[3.5, 0, -1.5]} intensity={2.4} color="#ddeeff" distance={10} />
+      {/* Lower ambient so rubber stays dark and readable on white bg */}
+      <ambientLight intensity={0.30} color="#e8eeff" />
+      {/* Strong top-left key for drama and tread detail */}
+      <directionalLight position={[4, 8, 5]} intensity={2.8} color="#ffffff" castShadow />
+      {/* Soft fill from lower right */}
+      <directionalLight position={[-3, -2, 3]} intensity={0.6} color="#dde8ff" />
+      {/* Accent colour backlight */}
+      <pointLight position={[0, 0, -5]} intensity={2.0} color="#CC0000" distance={10} />
+      {/* Rim kicker left */}
+      <pointLight position={[-4, 1, -1]} intensity={1.8} color="#c0d0ff" distance={9} />
+      {/* Rim kicker right */}
+      <pointLight position={[4, 1, -1]} intensity={1.4} color="#ffffff" distance={9} />
+      {/* Front top fill to reveal tread texture */}
+      <pointLight position={[0, 4, 4]} intensity={1.2} color="#ffffff" distance={8} />
     </>
   );
 }
@@ -208,8 +214,8 @@ export default function ConfiguratorScene({ accentColor, rimColor, rimRoughness 
   return (
     <Canvas
       camera={{ position: [0, 0, 3.8], fov: 40 }}
-      gl={{ antialias: true, alpha: false }}
-      style={{ width: "100%", height: "100%", background: "#3a3a4a" }}
+      gl={{ antialias: true, alpha: true }}
+      style={{ width: "100%", height: "100%", background: "transparent" }}
     >
       <Lights />
       <DraggableTyre accentColor={accentColor} rimColor={rimColor} rimRoughness={rimRoughness} />
