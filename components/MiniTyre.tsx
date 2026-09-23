@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 
 /**
  * CSS-only animated wheel — no WebGL canvas.
@@ -31,7 +31,7 @@ export default function MiniTyre({ accentColor }: { accentColor: string }) {
   const R_TYRE = 50;
 
   // Twin-spoke pair per group
-  const spokes: JSX.Element[] = [];
+  const spokes: React.ReactElement[] = [];
   for (let g = 0; g < SPOKES; g++) {
     const baseAngle = (g / SPOKES) * 360;
     for (const offset of [-10, 10]) {

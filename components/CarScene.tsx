@@ -76,7 +76,7 @@ function CarGLB({ accentColor }: { accentColor: string }) {
         const n = m?.name || "";
         if (n === "Taillight") {
           m.color.copy(accentCol);
-          (m as THREE.MeshPhysicalMaterial).emissiveFactor = accentCol.toArray() as unknown as THREE.Color;
+          (m as THREE.MeshPhysicalMaterial).emissive.copy(accentCol);
           m.needsUpdate = true;
         }
       });
