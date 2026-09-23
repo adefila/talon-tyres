@@ -6,7 +6,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { ArrowUpRight, RotateCcw, Car, Sliders } from "lucide-react";
 
 const ConfiguratorScene = dynamic(() => import("./ConfiguratorScene"), { ssr: false });
-const CarPreview = dynamic(() => import("./CarPreview"), { ssr: false });
+const CarScene = dynamic(() => import("./CarScene"), { ssr: false });
 
 const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -296,9 +296,10 @@ export default function TyreConfigurator() {
                     transition={{ duration: 0.35 }}
                     className="absolute inset-0 z-10"
                   >
-                    <CarPreview
+                    <CarScene
                       accentColor={tyre.accentColor}
                       rimColor={rim.color}
+                      rimRoughness={rim.roughness}
                       rimLabel={rim.label}
                       size={selectedSize}
                       tyreName={tyre.sub}

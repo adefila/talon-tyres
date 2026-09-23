@@ -2,6 +2,7 @@
 
 import { useRef, useMemo, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Environment } from "@react-three/drei";
 import * as THREE from "three";
 
 interface TyreProps {
@@ -39,7 +40,6 @@ function buildTyreProfile(): THREE.Vector2[] {
   ];
 }
 
-/* 5-spoke wide blade design — matches reference alloy wheel */
 function buildSpokeShape(): THREE.Shape {
   const s = new THREE.Shape();
   s.moveTo(-0.048, 0.200);
@@ -59,10 +59,10 @@ function parseSize(sizeStr: string): { width: number; aspect: number; rim: numbe
 
 function getSizeScale(sizeStr: string) {
   const { aspect } = parseSize(sizeStr);
-  if (aspect <= 35) return { xy: 0.90, z: 1.06 };  // low profile: shorter sidewall, wider
+  if (aspect <= 35) return { xy: 0.90, z: 1.06 };
   if (aspect <= 42) return { xy: 0.95, z: 1.02 };
-  if (aspect <= 50) return { xy: 1.00, z: 1.00 };  // reference
-  if (aspect <= 60) return { xy: 1.08, z: 0.98 };  // high profile: taller sidewall
+  if (aspect <= 50) return { xy: 1.00, z: 1.00 };
+  if (aspect <= 60) return { xy: 1.08, z: 0.98 };
   return { xy: 1.14, z: 0.95 };
 }
 
@@ -74,49 +74,6 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness, selectedSize = "24
   const rot = useRef({ x: 0.32, y: 0.55 });
   const { gl } = useThree();
 
-  /* ── Static materials (created once) ── */
-  const rubber = useMemo(() => new THREE.MeshStandardMaterial({
-    color: "#0a0a10", roughness: 0.93, metalness: 0.0,
-    emissive: "#040408", emissiveIntensity: 0.06,
-  }), []);
-
-  const grooveMat = useMemo(() => new THREE.MeshStandardMaterial({
-    color: "#030305", roughness: 1.0, metalness: 0,
-  }), []);
-
-  const rimDark = useMemo(() => new THREE.MeshStandardMaterial({
-    color: "#141418", roughness: 0.24, metalness: 0.85,
-    side: THREE.DoubleSide,
-  }), []);
-
-  const lugMat = useMemo(() => new THREE.MeshStandardMaterial({
-    color: "#28282e", roughness: 0.42, metalness: 0.82,
-  }), []);
-
-  /* ── Reactive materials — updated imperatively to avoid Canvas remount ── */
-  const spokeMat = useRef(new THREE.MeshStandardMaterial({
-    color: "#C0C8D8", roughness: 0.28, metalness: 0.72,
-  }));
-
-  const accentMat = useRef(new THREE.MeshStandardMaterial({
-    color: "#CC0000", roughness: 0.40, metalness: 0.28,
-    emissive: new THREE.Color("#CC0000"), emissiveIntensity: 0.52,
-  }));
-
-  useEffect(() => {
-    spokeMat.current.color.set(rimColor);
-    spokeMat.current.roughness = Math.max(rimRoughness, 0.22);
-    spokeMat.current.metalness = rimRoughness < 0.45 ? 0.72 : 0.52;
-    spokeMat.current.needsUpdate = true;
-  }, [rimColor, rimRoughness]);
-
-  useEffect(() => {
-    accentMat.current.color.set(accentColor);
-    accentMat.current.emissive.set(accentColor);
-    accentMat.current.needsUpdate = true;
-  }, [accentColor]);
-
-  /* ── Geometry ── */
   const tyreProfile = useMemo(buildTyreProfile, []);
 
   const spokeGeo = useMemo(() => {
@@ -130,14 +87,17 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness, selectedSize = "24
     });
   }, []);
 
-  /* 5 blade spokes at 72° intervals */
   const spokeAngles = useMemo(() =>
     Array.from({ length: 5 }, (_, i) => (i / 5) * Math.PI * 2), []);
 
   const lugAngles = useMemo(() =>
     Array.from({ length: 5 }, (_, i) => (i / 5) * Math.PI * 2), []);
 
-  /* ── Drag interaction ── */
+  /* clearcoat and metalness derived from roughness so each rim preset looks distinct */
+  const spokeClearcoat  = rimRoughness < 0.20 ? 0.90 : rimRoughness < 0.45 ? 0.40 : 0.05;
+  const spokeMetalness  = rimRoughness < 0.45 ? 0.92 : 0.58;
+  const spokeRoughness  = Math.max(rimRoughness, 0.12);
+
   useEffect(() => {
     const canvas = gl.domElement;
     const down = (e: PointerEvent) => {
@@ -189,75 +149,88 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness, selectedSize = "24
     <group ref={groupRef} scale={[sz.xy * 0.80, sz.xy * 0.80, sz.z * 0.80]}>
 
       {/* Tyre body */}
-      <mesh material={rubber} rotation={cylRot}>
+      <mesh rotation={cylRot}>
         <latheGeometry args={[tyreProfile, 96]} />
+        <meshStandardMaterial color="#0a0a10" roughness={0.93} metalness={0.0} emissive="#040408" emissiveIntensity={0.06} />
       </mesh>
 
-      {/* 5 circumferential tread grooves — deeper for realism */}
+      {/* Tread grooves */}
       {([-0.34, -0.17, 0.00, 0.17, 0.34] as number[]).map((z, i) => (
-        <mesh key={`groove-${i}`} position={[0, 0, z]} material={grooveMat}>
+        <mesh key={`groove-${i}`} position={[0, 0, z]}>
           <torusGeometry args={[1.468, 0.040, 10, 96]} />
+          <meshStandardMaterial color="#030305" roughness={1.0} metalness={0} />
         </mesh>
       ))}
 
       {/* Shoulder grooves */}
       {([-0.42, 0.42] as number[]).map((z, i) => (
-        <mesh key={`sg-${i}`} position={[0, 0, z]} material={grooveMat}>
+        <mesh key={`sg-${i}`} position={[0, 0, z]}>
           <torusGeometry args={[1.410, 0.028, 8, 80]} />
+          <meshStandardMaterial color="#030305" roughness={1.0} metalness={0} />
         </mesh>
       ))}
 
       {/* Sidewall accent rings */}
       {([0.478, -0.478] as number[]).map((z, i) => (
-        <mesh key={`sw-${i}`} position={[0, 0, z]} material={accentMat.current}>
+        <mesh key={`sw-${i}`} position={[0, 0, z]}>
           <torusGeometry args={[1.022, 0.020, 14, 96]} />
+          <meshStandardMaterial color={accentColor} roughness={0.40} metalness={0.30} emissive={accentColor} emissiveIntensity={0.50} />
         </mesh>
       ))}
 
-      {/* Rim barrel — DoubleSide so interior is visible between spokes */}
-      <mesh material={rimDark} rotation={cylRot}>
+      {/* Rim barrel — DoubleSide so interior visible between spokes */}
+      <mesh rotation={cylRot}>
         <cylinderGeometry args={[0.945, 0.945, 0.940, 64, 1, true]} />
+        <meshStandardMaterial color="#141418" roughness={0.24} metalness={0.85} side={THREE.DoubleSide} />
       </mesh>
 
-      {/* Rim barrel lip flanges */}
+      {/* Barrel lip flanges */}
       {([0.470, -0.470] as number[]).map((z, i) => (
-        <mesh key={`lip-${i}`} material={rimDark} position={[0, 0, z]} rotation={cylRot}>
+        <mesh key={`lip-${i}`} position={[0, 0, z]} rotation={cylRot}>
           <cylinderGeometry args={[0.962, 0.962, 0.024, 64]} />
+          <meshStandardMaterial color="#141418" roughness={0.24} metalness={0.85} />
         </mesh>
       ))}
 
-      {/* Inner back disc — visible through spoke windows from front */}
-      <mesh material={rimDark} position={[0, 0, -0.430]} rotation={cylRot}>
+      {/* Inner back disc */}
+      <mesh position={[0, 0, -0.430]} rotation={cylRot}>
         <cylinderGeometry args={[0.920, 0.920, 0.010, 48]} />
+        <meshStandardMaterial color="#141418" roughness={0.24} metalness={0.85} />
       </mesh>
 
-      {/* 5 wide blade spokes */}
+      {/* 5 wide blade spokes — JSX material is reactive: re-renders when rimColor/rimRoughness change */}
       {spokeAngles.map((angle, i) => (
-        <mesh
-          key={`spoke-${i}`}
-          rotation={[0, 0, angle]}
-          position={[0, 0, -HALF_DEPTH]}
-          material={spokeMat.current}
-          geometry={spokeGeo}
-        />
+        <mesh key={`spoke-${i}`} rotation={[0, 0, angle]} position={[0, 0, -HALF_DEPTH]} geometry={spokeGeo}>
+          <meshPhysicalMaterial
+            color={rimColor}
+            roughness={spokeRoughness}
+            metalness={spokeMetalness}
+            clearcoat={spokeClearcoat}
+            clearcoatRoughness={0.12}
+            reflectivity={0.85}
+          />
+        </mesh>
       ))}
 
       {/* Hub cylinder */}
-      <mesh material={rimDark} rotation={cylRot}>
+      <mesh rotation={cylRot}>
         <cylinderGeometry args={[0.195, 0.195, 1.005, 36]} />
+        <meshStandardMaterial color="#141418" roughness={0.24} metalness={0.85} />
       </mesh>
 
       {/* Hub face caps */}
       {([0.508, -0.508] as number[]).map((z, i) => (
-        <mesh key={`cap-${i}`} material={accentMat.current} position={[0, 0, z]} rotation={cylRot}>
+        <mesh key={`cap-${i}`} position={[0, 0, z]} rotation={cylRot}>
           <cylinderGeometry args={[0.162, 0.162, 0.026, 32]} />
+          <meshStandardMaterial color={accentColor} roughness={0.35} metalness={0.40} emissive={accentColor} emissiveIntensity={0.45} />
         </mesh>
       ))}
 
       {/* Centre nub */}
       {([0.520, -0.520] as number[]).map((z, i) => (
-        <mesh key={`nub-${i}`} material={accentMat.current} position={[0, 0, z]} rotation={cylRot}>
+        <mesh key={`nub-${i}`} position={[0, 0, z]} rotation={cylRot}>
           <cylinderGeometry args={[0.060, 0.060, 0.014, 20]} />
+          <meshStandardMaterial color={accentColor} roughness={0.35} metalness={0.40} emissive={accentColor} emissiveIntensity={0.45} />
         </mesh>
       ))}
 
@@ -266,40 +239,20 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness, selectedSize = "24
         const lx = Math.cos(a) * 0.645;
         const ly = Math.sin(a) * 0.645;
         return ([0.505, -0.505] as number[]).map((z, j) => (
-          <mesh key={`lug-${i}-${j}`} position={[lx, ly, z]} rotation={cylRot} material={lugMat}>
+          <mesh key={`lug-${i}-${j}`} position={[lx, ly, z]} rotation={cylRot}>
             <cylinderGeometry args={[0.056, 0.056, 0.058, 10]} />
+            <meshStandardMaterial color="#28282e" roughness={0.42} metalness={0.82} />
           </mesh>
         ));
       })}
 
-      {/* Subtle ground shadow ellipse */}
+      {/* Ground shadow */}
       <mesh position={[0, -1.65, -0.2]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[3.2, 1.8]} />
-        <meshBasicMaterial color="#000000" transparent opacity={0.10} />
+        <meshBasicMaterial color="#000000" transparent opacity={0.09} />
       </mesh>
 
     </group>
-  );
-}
-
-function Lights({ accentColor }: { accentColor: string }) {
-  return (
-    <>
-      <ambientLight intensity={0.32} color="#eef0ff" />
-      {/* Key light — top-right front, casts strong highlights on spoke faces */}
-      <directionalLight position={[4.5, 7, 5.5]}  intensity={4.2} color="#ffffff" />
-      {/* Fill light — soft from left */}
-      <directionalLight position={[-4, 2, 3.5]}   intensity={0.85} color="#d4e0ff" />
-      {/* Underlight — subtle */}
-      <directionalLight position={[1, -5, 2.5]}   intensity={0.38} color="#c8d4ff" />
-      {/* Accent back glow */}
-      <pointLight position={[0, 0, -7]}   intensity={3.8} color={accentColor} distance={16} />
-      {/* Side fill lights */}
-      <pointLight position={[-6, 1, 0.5]} intensity={2.2} color="#b8ccff" distance={14} />
-      <pointLight position={[6, 1, 0.5]}  intensity={1.8} color="#ffffff"  distance={14} />
-      {/* Front key point */}
-      <pointLight position={[2, 3, 6]}    intensity={2.0} color="#ffffff"  distance={14} />
-    </>
   );
 }
 
@@ -318,7 +271,18 @@ export default function ConfiguratorScene({ accentColor, rimColor, rimRoughness,
       style={{ width: "100%", height: "100%", background: "transparent" }}
       onCreated={({ gl }) => { gl.setClearColor(0x000000, 0); }}
     >
-      <Lights accentColor={accentColor} />
+      <ambientLight intensity={0.28} color="#eef0ff" />
+      <directionalLight position={[4.5, 7, 5.5]}  intensity={3.8} color="#ffffff" />
+      <directionalLight position={[-4, 2, 3.5]}   intensity={0.70} color="#d4e0ff" />
+      <directionalLight position={[1, -5, 2.5]}   intensity={0.30} color="#c8d4ff" />
+      <pointLight position={[0, 0, -7]}   intensity={3.2} color={accentColor} distance={16} />
+      <pointLight position={[-6, 1, 0.5]} intensity={1.8} color="#b8ccff" distance={14} />
+      <pointLight position={[6, 1, 0.5]}  intensity={1.5} color="#ffffff"  distance={14} />
+      <pointLight position={[2, 3, 6]}    intensity={1.6} color="#ffffff"  distance={14} />
+
+      {/* IBL environment for realistic metal reflections — no background change */}
+      <Environment preset="studio" background={false} />
+
       <DraggableTyre
         accentColor={accentColor}
         rimColor={rimColor}
