@@ -5,25 +5,25 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
 import * as THREE from "three";
 
-/* Y-split spoke — identical geometry to ConfiguratorScene */
+/* Twin-spoke pair — identical geometry to ConfiguratorScene */
 function buildSpokeShape(): THREE.Shape {
   const shape = new THREE.Shape();
-  shape.moveTo(-0.052, 0.195);
-  shape.bezierCurveTo(-0.098, 0.368, -0.200, 0.590, -0.276, 0.804);
-  shape.bezierCurveTo(-0.305, 0.858, -0.296, 0.908, -0.265, 0.914);
-  shape.lineTo(0.265, 0.914);
-  shape.bezierCurveTo(0.296, 0.908, 0.305, 0.858, 0.276, 0.804);
-  shape.bezierCurveTo(0.200, 0.590, 0.098, 0.368, 0.052, 0.195);
+  shape.moveTo(-0.052, 0.175);
+  shape.bezierCurveTo(-0.125, 0.355, -0.245, 0.605, -0.325, 0.822);
+  shape.bezierCurveTo(-0.344, 0.872, -0.334, 0.908, -0.298, 0.912);
+  shape.lineTo(0.298, 0.912);
+  shape.bezierCurveTo(0.334, 0.908, 0.344, 0.872, 0.325, 0.822);
+  shape.bezierCurveTo(0.245, 0.605, 0.125, 0.355, 0.052, 0.175);
   shape.closePath();
-  const split = new THREE.Path();
-  split.moveTo(0.000, 0.540);
-  split.bezierCurveTo(0.026, 0.616, 0.112, 0.736, 0.146, 0.800);
-  split.bezierCurveTo(0.138, 0.844, 0.108, 0.866, 0.082, 0.876);
-  split.lineTo(-0.082, 0.876);
-  split.bezierCurveTo(-0.108, 0.866, -0.138, 0.844, -0.146, 0.800);
-  split.bezierCurveTo(-0.112, 0.736, -0.026, 0.616, 0.000, 0.540);
-  split.closePath();
-  shape.holes.push(split);
+  const gap = new THREE.Path();
+  gap.moveTo(0.000, 0.248);
+  gap.bezierCurveTo(0.042, 0.345, 0.140, 0.548, 0.172, 0.768);
+  gap.bezierCurveTo(0.178, 0.832, 0.160, 0.872, 0.124, 0.882);
+  gap.lineTo(-0.124, 0.882);
+  gap.bezierCurveTo(-0.160, 0.872, -0.178, 0.832, -0.172, 0.768);
+  gap.bezierCurveTo(-0.140, 0.548, -0.042, 0.345, 0.000, 0.248);
+  gap.closePath();
+  shape.holes.push(gap);
   return shape;
 }
 

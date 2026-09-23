@@ -42,35 +42,33 @@ function buildTyreProfile(): THREE.Vector2[] {
 }
 
 /*
- * Y-split spoke shape — matches the reference alloy wheel:
- *   - Single blade at hub (y=0.195), fans out wide
- *   - Bifurcates into two branches from y≈0.540 to rim (y≈0.914)
- *   - Hole between branches = dark recess (matches reference photo)
- *   - Outer shape: CCW winding
- *   - Hole: CW winding (treated as cutout by Three.js)
+ * Twin-spoke pair — 5 groups × 2 arms = 10 spokes total (RTX style).
+ * The gap between the two arms begins very close to the hub (y≈0.240)
+ * so both arms are clearly visible for nearly the full spoke length.
+ * Outer shape: CCW. Hole: CW.
  */
 function buildSpokeShape(): THREE.Shape {
   const shape = new THREE.Shape();
 
-  /* Outer boundary — CCW */
-  shape.moveTo(-0.052, 0.195);
-  shape.bezierCurveTo(-0.098, 0.368, -0.200, 0.590, -0.276, 0.804);
-  shape.bezierCurveTo(-0.305, 0.858, -0.296, 0.908, -0.265, 0.914);
-  shape.lineTo(0.265, 0.914);
-  shape.bezierCurveTo(0.296, 0.908, 0.305, 0.858, 0.276, 0.804);
-  shape.bezierCurveTo(0.200, 0.590, 0.098, 0.368, 0.052, 0.195);
+  /* Outer boundary — CCW, wide fan from hub to rim */
+  shape.moveTo(-0.052, 0.175);
+  shape.bezierCurveTo(-0.125, 0.355, -0.245, 0.605, -0.325, 0.822);
+  shape.bezierCurveTo(-0.344, 0.872, -0.334, 0.908, -0.298, 0.912);
+  shape.lineTo(0.298, 0.912);
+  shape.bezierCurveTo(0.334, 0.908, 0.344, 0.872, 0.325, 0.822);
+  shape.bezierCurveTo(0.245, 0.605, 0.125, 0.355, 0.052, 0.175);
   shape.closePath();
 
-  /* Split hole — CW winding (start bottom, go RIGHT first = CW) */
-  const split = new THREE.Path();
-  split.moveTo(0.000, 0.540);
-  split.bezierCurveTo(0.026, 0.616, 0.112, 0.736, 0.146, 0.800);
-  split.bezierCurveTo(0.138, 0.844, 0.108, 0.866, 0.082, 0.876);
-  split.lineTo(-0.082, 0.876);
-  split.bezierCurveTo(-0.108, 0.866, -0.138, 0.844, -0.146, 0.800);
-  split.bezierCurveTo(-0.112, 0.736, -0.026, 0.616, 0.000, 0.540);
-  split.closePath();
-  shape.holes.push(split);
+  /* Twin-arm gap — CW, starts near hub, widens toward rim */
+  const gap = new THREE.Path();
+  gap.moveTo(0.000, 0.248);
+  gap.bezierCurveTo(0.042, 0.345, 0.140, 0.548, 0.172, 0.768);
+  gap.bezierCurveTo(0.178, 0.832, 0.160, 0.872, 0.124, 0.882);
+  gap.lineTo(-0.124, 0.882);
+  gap.bezierCurveTo(-0.160, 0.872, -0.178, 0.832, -0.172, 0.768);
+  gap.bezierCurveTo(-0.140, 0.548, -0.042, 0.345, 0.000, 0.248);
+  gap.closePath();
+  shape.holes.push(gap);
 
   return shape;
 }

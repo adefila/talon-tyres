@@ -5,11 +5,13 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Environment, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
 
-const TYRE_SCALE = 0.228;
-const FRONT_X    =  1.38;
-const REAR_X     = -1.32;
-const AXLE_Y     =  0.34;
+/* ── Axle positions (SUV proportions) ── */
+const FRONT_X  =  1.24;
+const REAR_X   = -1.18;
+const AXLE_Y   =  0.50;
+const TYRE_SCALE = 0.250;
 
+/* ── Tyre lathe profile ── */
 const tyreProfile: THREE.Vector2[] = [
   new THREE.Vector2(0.952, -0.495), new THREE.Vector2(0.968, -0.442),
   new THREE.Vector2(1.018, -0.432), new THREE.Vector2(1.085, -0.458),
@@ -25,62 +27,68 @@ const tyreProfile: THREE.Vector2[] = [
   new THREE.Vector2(0.952,  0.495),
 ];
 
+/* ── Twin-spoke shape (RTX style: 2 arms, gap starts near hub) ── */
 function buildSpokeShape(): THREE.Shape {
   const shape = new THREE.Shape();
-  shape.moveTo(-0.052, 0.195);
-  shape.bezierCurveTo(-0.098, 0.368, -0.200, 0.590, -0.276, 0.804);
-  shape.bezierCurveTo(-0.305, 0.858, -0.296, 0.908, -0.265, 0.914);
-  shape.lineTo(0.265, 0.914);
-  shape.bezierCurveTo(0.296, 0.908, 0.305, 0.858, 0.276, 0.804);
-  shape.bezierCurveTo(0.200, 0.590, 0.098, 0.368, 0.052, 0.195);
+  shape.moveTo(-0.052, 0.175);
+  shape.bezierCurveTo(-0.125, 0.355, -0.245, 0.605, -0.325, 0.822);
+  shape.bezierCurveTo(-0.344, 0.872, -0.334, 0.908, -0.298, 0.912);
+  shape.lineTo(0.298, 0.912);
+  shape.bezierCurveTo(0.334, 0.908, 0.344, 0.872, 0.325, 0.822);
+  shape.bezierCurveTo(0.245, 0.605, 0.125, 0.355, 0.052, 0.175);
   shape.closePath();
-  const split = new THREE.Path();
-  split.moveTo(0.000, 0.540);
-  split.bezierCurveTo(0.026, 0.616, 0.112, 0.736, 0.146, 0.800);
-  split.bezierCurveTo(0.138, 0.844, 0.108, 0.866, 0.082, 0.876);
-  split.lineTo(-0.082, 0.876);
-  split.bezierCurveTo(-0.108, 0.866, -0.138, 0.844, -0.146, 0.800);
-  split.bezierCurveTo(-0.112, 0.736, -0.026, 0.616, 0.000, 0.540);
-  split.closePath();
-  shape.holes.push(split);
+  const gap = new THREE.Path();
+  gap.moveTo(0.000, 0.248);
+  gap.bezierCurveTo(0.042, 0.345, 0.140, 0.548, 0.172, 0.768);
+  gap.bezierCurveTo(0.178, 0.832, 0.160, 0.872, 0.124, 0.882);
+  gap.lineTo(-0.124, 0.882);
+  gap.bezierCurveTo(-0.160, 0.872, -0.178, 0.832, -0.172, 0.768);
+  gap.bezierCurveTo(-0.140, 0.548, -0.042, 0.345, 0.000, 0.248);
+  gap.closePath();
+  shape.holes.push(gap);
   return shape;
 }
 
-/* Sedan side profile — nose at +X, tail at -X */
-function buildCarBodyShape(): THREE.Shape {
+/* ── Range Rover Evoque-style SUV body profile ── */
+function buildSUVBodyShape(): THREE.Shape {
   const shape = new THREE.Shape();
-  shape.moveTo(2.28, 0);
-  shape.lineTo(2.28, 0.22);
-  shape.bezierCurveTo(2.24, 0.38, 2.16, 0.50, 1.96, 0.54);
-  shape.bezierCurveTo(1.72, 0.58, 1.46, 0.57, 1.16, 0.54);
-  shape.bezierCurveTo(0.90, 0.52, 0.70, 0.64, 0.52, 0.87);
-  shape.bezierCurveTo(0.36, 1.05, 0.12, 1.21, -0.12, 1.26);
-  shape.bezierCurveTo(-0.36, 1.30, -0.72, 1.30, -1.02, 1.24);
-  shape.bezierCurveTo(-1.22, 1.18, -1.40, 1.05, -1.52, 0.92);
-  shape.bezierCurveTo(-1.62, 0.82, -1.72, 0.66, -1.80, 0.56);
-  shape.bezierCurveTo(-1.92, 0.47, -2.10, 0.43, -2.22, 0.43);
-  shape.bezierCurveTo(-2.25, 0.42, -2.28, 0.34, -2.28, 0.22);
-  shape.lineTo(-2.28, 0);
-  shape.lineTo(2.28, 0);
+  shape.moveTo(-2.38, 0.08);
+  shape.lineTo(2.38, 0.08);
+  shape.bezierCurveTo(2.50, 0.08, 2.52, 0.18, 2.52, 0.36);
+  shape.lineTo(2.52, 0.52);
+  shape.bezierCurveTo(2.48, 0.62, 2.30, 0.76, 2.10, 0.80);
+  shape.lineTo(1.10, 0.82);
+  shape.bezierCurveTo(0.95, 0.83, 0.82, 0.90, 0.74, 1.02);
+  shape.bezierCurveTo(0.68, 1.18, 0.66, 1.46, 0.64, 1.64);
+  shape.lineTo(-1.14, 1.68);
+  shape.bezierCurveTo(-1.32, 1.68, -1.58, 1.56, -1.78, 1.38);
+  shape.bezierCurveTo(-1.90, 1.26, -2.00, 1.10, -2.10, 0.96);
+  shape.bezierCurveTo(-2.28, 0.80, -2.44, 0.60, -2.50, 0.44);
+  shape.bezierCurveTo(-2.52, 0.30, -2.52, 0.14, -2.38, 0.08);
   shape.closePath();
+
   const frontArch = new THREE.Path();
-  frontArch.absarc(FRONT_X, AXLE_Y, 0.38, 0, Math.PI * 2, true);
+  frontArch.absarc(FRONT_X, AXLE_Y, 0.44, 0, Math.PI * 2, true);
   shape.holes.push(frontArch);
+
   const rearArch = new THREE.Path();
-  rearArch.absarc(REAR_X, AXLE_Y, 0.38, 0, Math.PI * 2, true);
+  rearArch.absarc(REAR_X, AXLE_Y, 0.44, 0, Math.PI * 2, true);
   shape.holes.push(rearArch);
+
   return shape;
 }
 
+/* ── Glass area ── */
 function buildGlassShape(): THREE.Shape {
   const shape = new THREE.Shape();
-  shape.moveTo(0.54, 0.87);
-  shape.bezierCurveTo(0.36, 1.05, 0.12, 1.21, -0.12, 1.26);
-  shape.bezierCurveTo(-0.36, 1.30, -0.72, 1.29, -1.02, 1.23);
-  shape.bezierCurveTo(-1.22, 1.17, -1.40, 1.04, -1.52, 0.91);
-  shape.bezierCurveTo(-1.56, 0.86, -1.58, 0.78, -1.58, 0.73);
-  shape.bezierCurveTo(-1.40, 0.69, -0.60, 0.66, 0.00, 0.69);
-  shape.bezierCurveTo(0.20, 0.70, 0.40, 0.76, 0.54, 0.87);
+  shape.moveTo(1.10, 0.82);
+  shape.bezierCurveTo(0.95, 0.83, 0.82, 0.90, 0.74, 1.02);
+  shape.bezierCurveTo(0.68, 1.18, 0.66, 1.46, 0.64, 1.64);
+  shape.lineTo(-1.14, 1.68);
+  shape.bezierCurveTo(-1.32, 1.68, -1.55, 1.56, -1.75, 1.38);
+  shape.bezierCurveTo(-1.86, 1.26, -1.95, 1.10, -2.04, 0.96);
+  shape.bezierCurveTo(-1.80, 0.88, -0.60, 0.84, 0.20, 0.84);
+  shape.bezierCurveTo(0.50, 0.84, 0.80, 0.83, 1.10, 0.82);
   shape.closePath();
   return shape;
 }
@@ -94,7 +102,7 @@ function WheelMesh({
   const groupRef = useRef<THREE.Group>(null!);
 
   useFrame((_, delta) => {
-    if (groupRef.current) groupRef.current.rotation.z -= delta * 1.4;
+    if (groupRef.current) groupRef.current.rotation.z -= delta * 1.2;
   });
 
   const spokeGeo = useMemo(() => {
@@ -111,37 +119,31 @@ function WheelMesh({
   const faceClearcoat = rimRoughness < 0.20 ? 0.95 : rimRoughness < 0.45 ? 0.50 : 0.08;
   const faceMetalness = rimRoughness < 0.45 ? 0.94 : 0.62;
   const faceRoughness = Math.max(rimRoughness, 0.10);
-
   const cylRot: [number, number, number] = [Math.PI / 2, 0, 0];
   const HALF_DEPTH = 0.460;
 
   return (
     <group ref={groupRef} scale={[TYRE_SCALE, TYRE_SCALE, TYRE_SCALE]}>
-
       <mesh rotation={cylRot}>
         <latheGeometry args={[tyreProfile, 56]} />
         <meshStandardMaterial color="#090910" roughness={0.93} metalness={0.0} />
       </mesh>
-
       {([-0.34, -0.17, 0.00, 0.17, 0.34] as number[]).map((z, i) => (
         <mesh key={`g-${i}`} position={[0, 0, z]}>
           <torusGeometry args={[1.468, 0.038, 8, 56]} />
           <meshStandardMaterial color="#030305" roughness={1.0} />
         </mesh>
       ))}
-
       {([0.480, -0.480] as number[]).map((z, i) => (
         <mesh key={`sw-${i}`} position={[0, 0, z]}>
           <torusGeometry args={[1.022, 0.018, 10, 56]} />
           <meshStandardMaterial color={accentColor} roughness={0.38} metalness={0.28} emissive={accentColor} emissiveIntensity={0.38} />
         </mesh>
       ))}
-
       <mesh rotation={cylRot}>
         <cylinderGeometry args={[0.945, 0.945, 0.930, 56, 1, true]} />
         <meshStandardMaterial color="#0E0E14" roughness={0.22} metalness={0.88} side={THREE.DoubleSide} />
       </mesh>
-
       {([0.468, -0.468] as number[]).map((z, i) => (
         <mesh key={`lip-${i}`} position={[0, 0, z]} rotation={cylRot}>
           <cylinderGeometry args={[0.968, 0.960, 0.048, 56]} />
@@ -152,15 +154,13 @@ function WheelMesh({
           />
         </mesh>
       ))}
-
       <mesh position={[0, 0, -0.428]} rotation={cylRot}>
         <cylinderGeometry args={[0.920, 0.920, 0.010, 36]} />
         <meshStandardMaterial color="#0A0A12" roughness={0.24} metalness={0.85} />
       </mesh>
-
       {spokeAngles.map((angle, i) => (
         <mesh key={`spoke-${i}`} rotation={[0, 0, angle]} position={[0, 0, -HALF_DEPTH]} geometry={spokeGeo}>
-          <meshPhysicalMaterial attach="material-0" color="#0C0C14" roughness={0.22} metalness={0.88} />
+          <meshPhysicalMaterial attach="material-0" color="#1A1A22" roughness={0.30} metalness={0.82} />
           <meshPhysicalMaterial attach="material-1" color="#0A0A12" roughness={0.28} metalness={0.80} />
           <meshPhysicalMaterial attach="material-2"
             color={rimColor} roughness={faceRoughness} metalness={faceMetalness}
@@ -168,193 +168,190 @@ function WheelMesh({
           />
         </mesh>
       ))}
-
       <mesh rotation={cylRot}>
         <cylinderGeometry args={[0.198, 0.198, 1.010, 24]} />
         <meshStandardMaterial color="#0E0E14" roughness={0.22} metalness={0.88} />
       </mesh>
-
       {([0.510, -0.510] as number[]).map((z, i) => (
         <mesh key={`cap-${i}`} position={[0, 0, z]} rotation={cylRot}>
           <cylinderGeometry args={[0.178, 0.178, 0.028, 20]} />
-          <meshStandardMaterial color="#0A0A10" roughness={0.30} metalness={0.85} />
+          <meshPhysicalMaterial color="#C8CCD8" roughness={0.12} metalness={0.96} clearcoat={0.9} clearcoatRoughness={0.08} />
         </mesh>
       ))}
-
       {([0.514, -0.514] as number[]).map((z, i) => (
         <mesh key={`hr-${i}`} position={[0, 0, z]}>
           <torusGeometry args={[0.168, 0.010, 8, 28]} />
           <meshStandardMaterial color={accentColor} roughness={0.35} metalness={0.40} emissive={accentColor} emissiveIntensity={0.50} />
         </mesh>
       ))}
-
     </group>
   );
 }
 
-/* ── Car body ── */
-function CarBody({ accentColor }: { accentColor: string }) {
-  const bodyGeo = useMemo(() => new THREE.ExtrudeGeometry(buildCarBodyShape(), {
-    depth: 1.72,
-    bevelEnabled: true,
-    bevelSize: 0.065,
-    bevelThickness: 0.055,
-    bevelSegments: 6,
+/* ── SUV body ── */
+function SUVBody({ accentColor }: { accentColor: string }) {
+  const bodyGeo = useMemo(() => new THREE.ExtrudeGeometry(buildSUVBodyShape(), {
+    depth: 1.82, bevelEnabled: true,
+    bevelSize: 0.055, bevelThickness: 0.048, bevelSegments: 6,
   }), []);
 
   const glassGeo = useMemo(() => new THREE.ExtrudeGeometry(buildGlassShape(), {
-    depth: 1.62,
-    bevelEnabled: true,
-    bevelSize: 0.022,
-    bevelThickness: 0.018,
-    bevelSegments: 4,
+    depth: 1.68, bevelEnabled: true,
+    bevelSize: 0.018, bevelThickness: 0.014, bevelSegments: 4,
   }), []);
-
-  const underbodyGeo = useMemo(() => new THREE.BoxGeometry(4.50, 0.06, 1.68), []);
 
   return (
     <group>
-      {/* ── Main body — deep metallic paint with clearcoat ── */}
-      <group position={[0, 0, -0.86]}>
+      <group position={[0, 0, -0.91]}>
+        {/* Painted body */}
         <mesh geometry={bodyGeo} castShadow receiveShadow>
-          <meshPhysicalMaterial
-            color="#18192A"
-            roughness={0.38}
-            metalness={0.30}
-            clearcoat={1.0}
-            clearcoatRoughness={0.10}
-          />
+          <meshPhysicalMaterial color="#F5F5F5" roughness={0.32} metalness={0.10} clearcoat={1.0} clearcoatRoughness={0.08} />
         </mesh>
 
-        {/* Window glass */}
-        <group position={[0, 0, 0.05]}>
+        {/* Roof panel */}
+        <mesh position={[-0.26, 1.68, 0.82]} castShadow>
+          <boxGeometry args={[1.82, 0.048, 1.50]} />
+          <meshPhysicalMaterial color="#F5F5F5" roughness={0.32} metalness={0.10} clearcoat={1.0} clearcoatRoughness={0.08} />
+        </mesh>
+
+        {/* Black A-pillar */}
+        <mesh position={[0.62, 1.34, 0.0]}>
+          <boxGeometry args={[0.12, 0.68, 1.84]} />
+          <meshStandardMaterial color="#0A0A0A" roughness={0.55} metalness={0.1} />
+        </mesh>
+        {/* Black C-pillar */}
+        <mesh position={[-1.22, 1.50, 0.0]}>
+          <boxGeometry args={[0.20, 0.40, 1.84]} />
+          <meshStandardMaterial color="#0A0A0A" roughness={0.55} metalness={0.1} />
+        </mesh>
+
+        {/* Side glass */}
+        <group position={[0, 0, 0.06]}>
           <mesh geometry={glassGeo}>
-            <meshPhysicalMaterial
-              color="#060C14"
-              roughness={0.06}
-              metalness={0.05}
-              transparent
-              opacity={0.74}
-              reflectivity={0.8}
-            />
+            <meshPhysicalMaterial color="#060C14" roughness={0.04} metalness={0.02} transparent opacity={0.72} reflectivity={0.85} />
           </mesh>
         </group>
 
         {/* Underbody */}
-        <mesh geometry={underbodyGeo} position={[0, 0.03, 0.86]}>
-          <meshStandardMaterial color="#10101A" roughness={0.82} metalness={0.18} />
+        <mesh position={[0, 0.08, 0.91]}>
+          <boxGeometry args={[4.80, 0.08, 1.80]} />
+          <meshStandardMaterial color="#111118" roughness={0.88} metalness={0.12} />
         </mesh>
 
-        {/* Wheel arch liners (dark recessed inner arch) */}
-        {([
-          { cx: FRONT_X, cy: AXLE_Y },
-          { cx: REAR_X,  cy: AXLE_Y },
-        ]).map(({ cx, cy }, i) => (
+        {/* Lower body cladding */}
+        <mesh position={[0, 0.19, 0.91]}>
+          <boxGeometry args={[4.60, 0.18, 1.86]} />
+          <meshStandardMaterial color="#1A1A1E" roughness={0.85} metalness={0.08} />
+        </mesh>
+
+        {/* Wheel arch liners */}
+        {([{ cx: FRONT_X, cy: AXLE_Y }, { cx: REAR_X, cy: AXLE_Y }]).map(({ cx, cy }, i) => (
           <mesh key={`arch-${i}`} position={[cx, cy, 0]}>
-            <torusGeometry args={[0.385, 0.035, 8, 56, Math.PI]} />
+            <torusGeometry args={[0.445, 0.040, 8, 56, Math.PI]} />
             <meshStandardMaterial color="#0A0A14" roughness={0.80} metalness={0.20} side={THREE.BackSide} />
+          </mesh>
+        ))}
+
+        {/* Roof rails */}
+        {([-0.82, 0.82] as number[]).map((z, i) => (
+          <mesh key={`rail-${i}`} position={[-0.28, 1.74, z]}>
+            <boxGeometry args={[1.70, 0.032, 0.060]} />
+            <meshPhysicalMaterial color="#888899" roughness={0.28} metalness={0.85} clearcoat={0.6} clearcoatRoughness={0.14} />
           </mesh>
         ))}
       </group>
 
-      {/* ── Accent stripe along beltline ── */}
-      <mesh position={[0, 0.628, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <boxGeometry args={[3.80, 0.90, 0.010]} />
-        <meshStandardMaterial color={accentColor} roughness={0.42} metalness={0.28} emissive={accentColor} emissiveIntensity={0.14} transparent opacity={0.45} />
+      {/* Front grille */}
+      <mesh position={[2.50, 0.54, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <boxGeometry args={[1.64, 0.34, 0.06]} />
+        <meshPhysicalMaterial color="#111118" roughness={0.40} metalness={0.70} clearcoat={0.5} clearcoatRoughness={0.18} />
+      </mesh>
+      {([0.46, 0.52, 0.58, 0.64] as number[]).map((y, i) => (
+        <mesh key={`sl-${i}`} position={[2.49, y, 0]}>
+          <boxGeometry args={[0.05, 0.016, 1.52]} />
+          <meshPhysicalMaterial color="#1E1E28" roughness={0.28} metalness={0.85} clearcoat={0.5} />
+        </mesh>
+      ))}
+      {([-0.60, -0.20, 0.20, 0.60] as number[]).map((z, i) => (
+        <mesh key={`vb-${i}`} position={[2.49, 0.56, z]}>
+          <boxGeometry args={[0.05, 0.30, 0.016]} />
+          <meshPhysicalMaterial color="#1E1E28" roughness={0.28} metalness={0.85} clearcoat={0.5} />
+        </mesh>
+      ))}
+      <mesh position={[2.50, 0.22, 0]}>
+        <boxGeometry args={[0.06, 0.18, 1.70]} />
+        <meshStandardMaterial color="#1A1A1E" roughness={0.80} metalness={0.20} />
       </mesh>
 
-      {/* ── Front headlights — LED strip style ── */}
-      {([-0.60, 0.60] as number[]).map((z, i) => (
-        <group key={`hl-${i}`} position={[2.26, 0.44, z]}>
+      {/* LED headlights */}
+      {([-0.70, 0.70] as number[]).map((z, i) => (
+        <group key={`hl-${i}`} position={[2.48, 0.76, z]}>
           <mesh>
-            <boxGeometry args={[0.04, 0.06, 0.34]} />
-            <meshStandardMaterial color="#FFFFFF" emissive="#DDEEFF" emissiveIntensity={4.0} roughness={0.04} metalness={0} />
+            <boxGeometry args={[0.04, 0.10, 0.38]} />
+            <meshStandardMaterial color="#FFFFFF" emissive="#DDEEFF" emissiveIntensity={3.5} roughness={0.04} metalness={0} />
           </mesh>
-          {/* DRL strip */}
-          <mesh position={[0, -0.04, 0]}>
-            <boxGeometry args={[0.025, 0.018, 0.30]} />
+          <mesh position={[0, -0.06, 0]}>
+            <boxGeometry args={[0.025, 0.020, 0.32]} />
             <meshStandardMaterial color="#FFFBE8" emissive="#FFFBE8" emissiveIntensity={5.0} roughness={0.02} metalness={0} />
           </mesh>
         </group>
       ))}
 
-      {/* ── Rear tail lights — accent coloured ── */}
-      {([-0.60, 0.60] as number[]).map((z, i) => (
-        <group key={`tl-${i}`} position={[-2.26, 0.44, z]}>
+      {/* Rear lights */}
+      {([-0.72, 0.72] as number[]).map((z, i) => (
+        <group key={`tl-${i}`} position={[-2.48, 0.76, z]}>
           <mesh>
-            <boxGeometry args={[0.04, 0.08, 0.36]} />
-            <meshStandardMaterial color={accentColor} emissive={accentColor} emissiveIntensity={3.5} roughness={0.08} metalness={0} />
+            <boxGeometry args={[0.04, 0.38, 0.10]} />
+            <meshStandardMaterial color={accentColor} emissive={accentColor} emissiveIntensity={3.0} roughness={0.08} metalness={0} />
           </mesh>
-          <mesh position={[0, -0.05, 0]}>
-            <boxGeometry args={[0.025, 0.022, 0.30]} />
-            <meshStandardMaterial color="#FF2222" emissive="#FF1111" emissiveIntensity={4.0} roughness={0.04} metalness={0} />
+          <mesh position={[0, -0.20, 0.18]}>
+            <boxGeometry args={[0.025, 0.028, 0.36]} />
+            <meshStandardMaterial color="#FF1111" emissive="#FF0000" emissiveIntensity={4.0} roughness={0.04} metalness={0} />
+          </mesh>
+        </group>
+      ))}
+      <mesh position={[-2.50, 0.22, 0]}>
+        <boxGeometry args={[0.06, 0.20, 1.74]} />
+        <meshStandardMaterial color="#1A1A1E" roughness={0.80} metalness={0.12} />
+      </mesh>
+
+      {/* Side mirrors */}
+      {([0.90, -0.90] as number[]).map((z, i) => (
+        <group key={`mir-${i}`} position={[0.90, 1.04, z]}>
+          <mesh>
+            <boxGeometry args={[0.18, 0.09, 0.12]} />
+            <meshPhysicalMaterial color="#1A1A26" roughness={0.34} metalness={0.22} clearcoat={0.85} clearcoatRoughness={0.10} />
           </mesh>
         </group>
       ))}
 
-      {/* ── Front grille / lower bumper ── */}
-      <mesh position={[2.26, 0.18, 0]}>
-        <boxGeometry args={[0.05, 0.22, 1.00]} />
-        <meshPhysicalMaterial color="#0A0A12" roughness={0.45} metalness={0.60} clearcoat={0.4} clearcoatRoughness={0.2} />
+      {/* Front skid accent */}
+      <mesh position={[2.49, 0.12, 0]}>
+        <boxGeometry args={[0.05, 0.030, 1.60]} />
+        <meshPhysicalMaterial color={accentColor} roughness={0.35} metalness={0.60} emissive={accentColor} emissiveIntensity={0.20} />
       </mesh>
-
-      {/* Grille horizontal slats */}
-      {([0.06, 0.13, 0.20] as number[]).map((y, i) => (
-        <mesh key={`slat-${i}`} position={[2.25, y, 0]}>
-          <boxGeometry args={[0.04, 0.012, 0.96]} />
-          <meshPhysicalMaterial color="#1A1A28" roughness={0.30} metalness={0.80} clearcoat={0.5} clearcoatRoughness={0.15} />
-        </mesh>
-      ))}
-
-      {/* Door lines (thin embossed edge) */}
-      <mesh position={[-0.05, 0.65, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <boxGeometry args={[0.014, 0.92, 0.60]} />
-        <meshStandardMaterial color="#131320" roughness={0.50} metalness={0.50} />
-      </mesh>
-
-      {/* Side mirror stubs */}
-      {([0.82, -0.82] as number[]).map((z, i) => (
-        <mesh key={`mirror-${i}`} position={[0.88, 0.96, z]}>
-          <boxGeometry args={[0.14, 0.07, 0.10]} />
-          <meshPhysicalMaterial color="#16172A" roughness={0.36} metalness={0.28} clearcoat={0.9} clearcoatRoughness={0.10} />
-        </mesh>
-      ))}
     </group>
   );
 }
 
 /* ── Scene root ── */
-function Scene({
-  accentColor, rimColor, rimRoughness,
-}: {
+function Scene({ accentColor, rimColor, rimRoughness }: {
   accentColor: string; rimColor: string; rimRoughness: number;
 }) {
   return (
     <>
-      <CarBody accentColor={accentColor} />
-
-      {/* Right-side wheels (rim faces +Z = toward default camera) */}
+      <SUVBody accentColor={accentColor} />
       {([FRONT_X, REAR_X] as number[]).map((x, i) => (
-        <group key={`rw-${i}`} position={[x, AXLE_Y, 0.86]}>
+        <group key={`rw-${i}`} position={[x, AXLE_Y, 0.91]}>
           <WheelMesh rimColor={rimColor} rimRoughness={rimRoughness} accentColor={accentColor} />
         </group>
       ))}
-
-      {/* Left-side wheels (flipped, rim faces −Z) */}
       {([FRONT_X, REAR_X] as number[]).map((x, i) => (
-        <group key={`lw-${i}`} position={[x, AXLE_Y, -0.86]} rotation={[0, Math.PI, 0]}>
+        <group key={`lw-${i}`} position={[x, AXLE_Y, -0.91]} rotation={[0, Math.PI, 0]}>
           <WheelMesh rimColor={rimColor} rimRoughness={rimRoughness} accentColor={accentColor} />
         </group>
       ))}
-
-      <ContactShadows
-        position={[0, 0.001, 0]}
-        opacity={0.52}
-        width={10}
-        height={5.5}
-        blur={2.0}
-        far={1.8}
-      />
+      <ContactShadows position={[0, 0.001, 0]} opacity={0.55} width={12} height={6} blur={2.2} far={2.0} />
     </>
   );
 }
@@ -370,51 +367,38 @@ interface Props {
 
 export default function CarScene({ accentColor, rimColor, rimRoughness }: Props) {
   return (
-    <div className="relative w-full h-full" style={{ background: "#F2F3F8" }}>
+    <div className="relative w-full h-full" style={{ background: "#ECEDF4" }}>
       <Canvas
         shadows
-        camera={{ position: [3.6, 1.9, 5.0], fov: 40 }}
+        camera={{ position: [4.2, 2.2, 5.5], fov: 38 }}
         gl={{ antialias: true }}
         style={{ width: "100%", height: "100%" }}
       >
-        <color attach="background" args={["#F2F3F8"]} />
-
-        <ambientLight intensity={0.50} color="#eef0ff" />
+        <color attach="background" args={["#ECEDF4"]} />
+        <ambientLight intensity={0.55} color="#eef0ff" />
         <directionalLight
-          position={[7, 12, 7]} intensity={2.6} color="#ffffff"
-          castShadow
-          shadow-mapSize={[1024, 1024]}
-          shadow-camera-left={-7} shadow-camera-right={7}
-          shadow-camera-top={4} shadow-camera-bottom={-1}
+          position={[8, 14, 8]} intensity={2.8} color="#ffffff"
+          castShadow shadow-mapSize={[1024, 1024]}
+          shadow-camera-left={-8} shadow-camera-right={8}
+          shadow-camera-top={5} shadow-camera-bottom={-1}
         />
-        <directionalLight position={[-5, 5, 4]} intensity={0.75} color="#d4e0ff" />
-        <directionalLight position={[0, 2, -6]} intensity={0.30} color="#c8d8ff" />
-        <pointLight position={[0, 5, 0]} intensity={1.0} color="#ffffff" distance={16} />
-
+        <directionalLight position={[-6, 6, 5]} intensity={0.70} color="#d4e0ff" />
+        <directionalLight position={[0, 3, -7]} intensity={0.28} color="#c8d8ff" />
+        <pointLight position={[0, 6, 0]} intensity={1.2} color="#ffffff" distance={18} />
         <Environment preset="studio" background={false} />
-
-        {/* Ground plane */}
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
           <planeGeometry args={[30, 20]} />
-          <meshStandardMaterial color="#ECEDF4" roughness={0.95} metalness={0.0} />
+          <meshStandardMaterial color="#E8E9F0" roughness={0.96} metalness={0.0} />
         </mesh>
-
         <Scene accentColor={accentColor} rimColor={rimColor} rimRoughness={rimRoughness} />
-
         <OrbitControls
-          target={[0, 0.5, 0]}
-          autoRotate
-          autoRotateSpeed={0.35}
-          enableDamping
-          dampingFactor={0.06}
-          minPolarAngle={Math.PI / 10}
-          maxPolarAngle={Math.PI / 2.2}
-          minDistance={3.5}
-          maxDistance={11}
+          target={[0, 0.8, 0]}
+          autoRotate autoRotateSpeed={0.32}
+          enableDamping dampingFactor={0.06}
+          minPolarAngle={Math.PI / 10} maxPolarAngle={Math.PI / 2.3}
+          minDistance={4.0} maxDistance={12}
         />
       </Canvas>
-
-      {/* Badge */}
       <div className="absolute top-4 left-4 text-[9px] font-bold tracking-[0.22em] uppercase text-[#9CA3AF] flex items-center gap-2 pointer-events-none">
         <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
         3D Preview · Drag to Rotate
