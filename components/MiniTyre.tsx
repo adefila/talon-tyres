@@ -6,17 +6,17 @@ import * as THREE from "three";
 
 function buildSpokeShape(): THREE.Shape {
   const s = new THREE.Shape();
-  s.moveTo(-0.034, 0.195);
-  s.quadraticCurveTo(-0.055, 0.50, -0.088, 0.912);
-  s.lineTo(0.088, 0.912);
-  s.quadraticCurveTo(0.055, 0.50, 0.034, 0.195);
+  s.moveTo(-0.048, 0.200);
+  s.bezierCurveTo(-0.076, 0.400, -0.138, 0.660, -0.170, 0.908);
+  s.lineTo(0.170, 0.908);
+  s.bezierCurveTo(0.138, 0.660, 0.076, 0.400, 0.048, 0.200);
   s.closePath();
   return s;
 }
 
 function TyreMesh({ accentColor }: { accentColor: string }) {
   const groupRef = useRef<THREE.Group>(null!);
-  const rot = useRef({ x: 0.42, y: 0.0 });
+  const rot = useRef({ x: 0.32, y: 0.55 });
 
   const rubber = useMemo(() => new THREE.MeshStandardMaterial({
     color: "#0a0a10", roughness: 0.92, metalness: 0.0,
@@ -28,11 +28,12 @@ function TyreMesh({ accentColor }: { accentColor: string }) {
   }), []);
 
   const rimDark = useMemo(() => new THREE.MeshStandardMaterial({
-    color: "#141418", roughness: 0.22, metalness: 0.88,
+    color: "#141418", roughness: 0.24, metalness: 0.85,
+    side: THREE.DoubleSide,
   }), []);
 
   const spokeMat = useMemo(() => new THREE.MeshStandardMaterial({
-    color: "#D0D8E8", roughness: 0.28, metalness: 0.62,
+    color: "#C8D2E2", roughness: 0.26, metalness: 0.72,
   }), []);
 
   const accentMat = useMemo(() => new THREE.MeshStandardMaterial({
@@ -73,22 +74,17 @@ function TyreMesh({ accentColor }: { accentColor: string }) {
   const spokeGeo = useMemo(() => {
     const shape = buildSpokeShape();
     return new THREE.ExtrudeGeometry(shape, {
-      depth: 0.920,   // full rim depth
+      depth: 0.920,
       bevelEnabled: true,
-      bevelSize: 0.006,
-      bevelThickness: 0.006,
+      bevelSize: 0.007,
+      bevelThickness: 0.007,
       bevelSegments: 2,
     });
   }, []);
 
-  const spokeAngles = useMemo(() => {
-    const angles: number[] = [];
-    for (let i = 0; i < 5; i++) {
-      const base = (i / 5) * Math.PI * 2;
-      angles.push(base - 0.098, base + 0.098);
-    }
-    return angles;
-  }, []);
+  /* 5 wide blade spokes */
+  const spokeAngles = useMemo(() =>
+    Array.from({ length: 5 }, (_, i) => (i / 5) * Math.PI * 2), []);
 
   const lugAngles = useMemo(() =>
     Array.from({ length: 5 }, (_, i) => (i / 5) * Math.PI * 2), []);
@@ -101,7 +97,7 @@ function TyreMesh({ accentColor }: { accentColor: string }) {
   });
 
   const cylRot: [number, number, number] = [Math.PI / 2, 0, 0];
-  const HALF_DEPTH = 0.460; // spokes span full rim depth
+  const HALF_DEPTH = 0.460;
 
   return (
     <group ref={groupRef} scale={[0.70, 0.70, 0.70]}>
@@ -112,20 +108,27 @@ function TyreMesh({ accentColor }: { accentColor: string }) {
       </mesh>
 
       {/* Tread grooves */}
-      {([-0.30, -0.14, 0.00, 0.14, 0.30] as number[]).map((z, i) => (
+      {([-0.34, -0.17, 0.00, 0.17, 0.34] as number[]).map((z, i) => (
         <mesh key={`g-${i}`} position={[0, 0, z]} material={grooveMat}>
-          <torusGeometry args={[1.471, 0.033, 9, 80]} />
+          <torusGeometry args={[1.468, 0.038, 9, 80]} />
+        </mesh>
+      ))}
+
+      {/* Shoulder grooves */}
+      {([-0.42, 0.42] as number[]).map((z, i) => (
+        <mesh key={`sg-${i}`} position={[0, 0, z]} material={grooveMat}>
+          <torusGeometry args={[1.408, 0.026, 7, 72]} />
         </mesh>
       ))}
 
       {/* Sidewall accent rings */}
-      {([0.472, -0.472] as number[]).map((z, i) => (
+      {([0.474, -0.474] as number[]).map((z, i) => (
         <mesh key={`sw-${i}`} position={[0, 0, z]} material={accentMat}>
           <torusGeometry args={[1.022, 0.020, 12, 80]} />
         </mesh>
       ))}
 
-      {/* Rim barrel */}
+      {/* Rim barrel — DoubleSide */}
       <mesh material={rimDark} rotation={cylRot}>
         <cylinderGeometry args={[0.945, 0.945, 0.940, 48, 1, true]} />
       </mesh>
@@ -137,14 +140,12 @@ function TyreMesh({ accentColor }: { accentColor: string }) {
         </mesh>
       ))}
 
-      {/* Face background discs (flat — same radius top/bottom) */}
-      {([0.460, -0.460] as number[]).map((z, i) => (
-        <mesh key={`face-${i}`} material={rimDark} position={[0, 0, z]} rotation={cylRot}>
-          <cylinderGeometry args={[0.930, 0.930, 0.008, 48]} />
-        </mesh>
-      ))}
+      {/* Inner back disc */}
+      <mesh material={rimDark} position={[0, 0, -0.425]} rotation={cylRot}>
+        <cylinderGeometry args={[0.918, 0.918, 0.010, 40]} />
+      </mesh>
 
-      {/* 10 tapered Y-spokes */}
+      {/* 5 wide blade spokes */}
       {spokeAngles.map((angle, i) => (
         <mesh
           key={`spoke-${i}`}
@@ -190,14 +191,14 @@ export default function MiniTyre({ accentColor }: { accentColor: string }) {
       style={{ width: "100%", height: "100%", background: "transparent" }}
       onCreated={({ gl }) => { gl.setClearColor(0x000000, 0); }}
     >
-      <ambientLight intensity={0.80} color="#e8eeff" />
-      <directionalLight position={[5, 8, 6]}   intensity={4.5} color="#ffffff" />
-      <directionalLight position={[-5, 3, 4]}  intensity={1.2} color="#ccd8ff" />
-      <directionalLight position={[1, -4, 2]}  intensity={0.8} color="#d0d8ff" />
+      <ambientLight intensity={0.75} color="#e8eeff" />
+      <directionalLight position={[4.5, 7, 5.5]}  intensity={4.8} color="#ffffff" />
+      <directionalLight position={[-4, 2, 3.5]}   intensity={1.1} color="#ccd8ff" />
+      <directionalLight position={[1, -4, 2]}     intensity={0.7} color="#d0d8ff" />
       <pointLight position={[0, 0, -5]}  intensity={2.0} color={accentColor} distance={12} />
-      <pointLight position={[-5, 2, 1]}  intensity={3.0} color="#c8d8ff"    distance={14} />
-      <pointLight position={[5, 2, 1]}   intensity={2.5} color="#ffffff"    distance={14} />
-      <pointLight position={[0, 0, 5]}   intensity={2.8} color="#ffffff"    distance={10} />
+      <pointLight position={[-5, 2, 1]}  intensity={2.8} color="#c8d8ff"    distance={14} />
+      <pointLight position={[5, 2, 1]}   intensity={2.2} color="#ffffff"    distance={14} />
+      <pointLight position={[0, 0, 5]}   intensity={2.6} color="#ffffff"    distance={10} />
       <TyreMesh accentColor={accentColor} />
     </Canvas>
   );
