@@ -3,10 +3,9 @@
 import dynamic from "next/dynamic";
 import { useState, useRef } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, RotateCcw, Car, Sliders } from "lucide-react";
+import { ArrowUpRight, RotateCcw } from "lucide-react";
 
 const ConfiguratorScene = dynamic(() => import("./ConfiguratorScene"), { ssr: false });
-const CarScene = dynamic(() => import("./CarScene"), { ssr: false });
 
 const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -82,7 +81,6 @@ export default function TyreConfigurator() {
   const [activeType, setActiveType] = useState(0);
   const [activeRim, setActiveRim] = useState(0);
   const [activeSize, setActiveSize] = useState(0);
-  const [viewMode, setViewMode] = useState<"tyre" | "car">("tyre");
 
   const tyre = tyreTypes[activeType];
   const rim = rimOptions[activeRim];
@@ -233,80 +231,28 @@ export default function TyreConfigurator() {
             transition={{ delay: 0.2, duration: 0.8, ease }}
             className="flex flex-col"
           >
-            {/* View toggle bar */}
-            <div className="flex items-center border-b border-[#E5E7EB] px-5 py-3 gap-2">
-              <button
-                onClick={() => setViewMode("tyre")}
-                className={`flex items-center gap-2 px-3.5 py-2 text-[10px] font-bold tracking-[0.16em] uppercase transition-all ${
-                  viewMode === "tyre"
-                    ? "bg-[#0A0A14] text-white"
-                    : "text-[#6B7280] hover:text-[#374151]"
-                }`}
-              >
-                <Sliders size={11} />
-                Tyre View
-              </button>
-              <button
-                onClick={() => setViewMode("car")}
-                className={`flex items-center gap-2 px-3.5 py-2 text-[10px] font-bold tracking-[0.16em] uppercase transition-all ${
-                  viewMode === "car"
-                    ? "bg-[#0A0A14] text-white"
-                    : "text-[#6B7280] hover:text-[#374151]"
-                }`}
-              >
-                <Car size={11} />
-                On Car
-              </button>
+            {/* Size label bar */}
+            <div className="flex items-center border-b border-[#E5E7EB] px-5 py-3">
+              <span className="text-[9px] font-bold tracking-[0.28em] uppercase text-[#9CA3AF]">
+                3D Preview
+              </span>
               <div className="ml-auto text-[9px] text-[#9CA3AF] tracking-[0.18em] uppercase">
                 {selectedSize}
               </div>
             </div>
 
-            {/* 3D Canvas / Car Preview */}
-            <div className="relative flex-1 min-h-[380px]">
-              <AnimatePresence mode="wait">
-                {viewMode === "tyre" ? (
-                  <motion.div
-                    key={`tyre-${activeType}`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.35 }}
-                    className="absolute inset-0 z-10 bg-white"
-                  >
-                    {/* Canvas stays mounted across rim changes — materials update imperatively */}
-                    <ConfiguratorScene
-                      accentColor={tyre.accentColor}
-                      rimColor={rim.color}
-                      rimRoughness={rim.roughness}
-                      selectedSize={selectedSize}
-                    />
-                    {/* Drag hint */}
-                    <div className="absolute bottom-4 right-4 flex items-center gap-2 pointer-events-none z-20">
-                      <RotateCcw size={13} className="text-[#9CA3AF]" />
-                      <span className="text-[10px] text-[#9CA3AF] tracking-[0.2em] uppercase">Drag to rotate</span>
-                    </div>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="car"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.35 }}
-                    className="absolute inset-0 z-10"
-                  >
-                    <CarScene
-                      accentColor={tyre.accentColor}
-                      rimColor={rim.color}
-                      rimRoughness={rim.roughness}
-                      rimLabel={rim.label}
-                      size={selectedSize}
-                      tyreName={tyre.sub}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
+            {/* 3D Canvas */}
+            <div className="relative flex-1 min-h-[380px] bg-white">
+              <ConfiguratorScene
+                accentColor={tyre.accentColor}
+                rimColor={rim.color}
+                rimRoughness={rim.roughness}
+                selectedSize={selectedSize}
+              />
+              <div className="absolute bottom-4 right-4 flex items-center gap-2 pointer-events-none z-20">
+                <RotateCcw size={13} className="text-[#9CA3AF]" />
+                <span className="text-[10px] text-[#9CA3AF] tracking-[0.2em] uppercase">Drag to rotate</span>
+              </div>
             </div>
 
             {/* Performance data */}
