@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef, useMemo, useEffect } from "react";
+import { useRef, useEffect, useMemo } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Environment } from "@react-three/drei";
+import { Environment, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 
 interface TyreProps {
@@ -12,121 +12,69 @@ interface TyreProps {
   selectedSize?: string;
 }
 
-/* ─── Tyre profile (lathe revolution around Y, then rotated 90° to Z-axis) ─── */
-function buildTyreProfile(): THREE.Vector2[] {
-  return [
-    new THREE.Vector2(0.952, -0.495),
-    new THREE.Vector2(0.968, -0.442),
-    new THREE.Vector2(1.018, -0.432),
-    new THREE.Vector2(1.085, -0.458),
-    new THREE.Vector2(1.195, -0.468),
-    new THREE.Vector2(1.328, -0.464),
-    new THREE.Vector2(1.418, -0.428),
-    new THREE.Vector2(1.458, -0.356),
-    new THREE.Vector2(1.473, -0.254),
-    new THREE.Vector2(1.480, -0.136),
-    new THREE.Vector2(1.482, -0.038),
-    new THREE.Vector2(1.482,  0.000),
-    new THREE.Vector2(1.482,  0.038),
-    new THREE.Vector2(1.480,  0.136),
-    new THREE.Vector2(1.473,  0.254),
-    new THREE.Vector2(1.458,  0.356),
-    new THREE.Vector2(1.418,  0.428),
-    new THREE.Vector2(1.328,  0.464),
-    new THREE.Vector2(1.195,  0.468),
-    new THREE.Vector2(1.085,  0.458),
-    new THREE.Vector2(1.018,  0.432),
-    new THREE.Vector2(0.968,  0.442),
-    new THREE.Vector2(0.952,  0.495),
-  ];
+function parseSize(s: string) {
+  const m = s.match(/(\d+)\/(\d+)\s*R(\d+)/);
+  return m ? { aspect: parseInt(m[2]) } : { aspect: 45 };
+}
+function getSizeScale(s: string) {
+  const { aspect } = parseSize(s);
+  if (aspect <= 35) return 0.88;
+  if (aspect <= 42) return 0.94;
+  if (aspect <= 50) return 1.00;
+  if (aspect <= 60) return 1.07;
+  return 1.13;
 }
 
-/*
- * Twin-spoke pair — 5 groups × 2 arms = 10 spokes total (RTX style).
- * The gap between the two arms begins very close to the hub (y≈0.240)
- * so both arms are clearly visible for nearly the full spoke length.
- * Outer shape: CCW. Hole: CW.
- */
-function buildSpokeShape(): THREE.Shape {
-  const shape = new THREE.Shape();
+function WheelGLB({ rimColor, rimRoughness, accentColor }: Omit<TyreProps, "selectedSize">) {
+  const { scene } = useGLTF("/models/wheel.glb");
 
-  /* Outer boundary — CCW, wide fan from hub to rim */
-  shape.moveTo(-0.052, 0.175);
-  shape.bezierCurveTo(-0.125, 0.355, -0.245, 0.605, -0.325, 0.822);
-  shape.bezierCurveTo(-0.344, 0.872, -0.334, 0.908, -0.298, 0.912);
-  shape.lineTo(0.298, 0.912);
-  shape.bezierCurveTo(0.334, 0.908, 0.344, 0.872, 0.325, 0.822);
-  shape.bezierCurveTo(0.245, 0.605, 0.125, 0.355, 0.052, 0.175);
-  shape.closePath();
+  const cloned = useMemo(() => scene.clone(true), [scene]);
 
-  /* Twin-arm gap — CW, starts near hub, widens toward rim */
-  const gap = new THREE.Path();
-  gap.moveTo(0.000, 0.248);
-  gap.bezierCurveTo(0.042, 0.345, 0.140, 0.548, 0.172, 0.768);
-  gap.bezierCurveTo(0.178, 0.832, 0.160, 0.872, 0.124, 0.882);
-  gap.lineTo(-0.124, 0.882);
-  gap.bezierCurveTo(-0.160, 0.872, -0.178, 0.832, -0.172, 0.768);
-  gap.bezierCurveTo(-0.140, 0.548, -0.042, 0.345, 0.000, 0.248);
-  gap.closePath();
-  shape.holes.push(gap);
+  // Apply runtime colors whenever props change
+  useEffect(() => {
+    const rimCol   = new THREE.Color(rimColor);
+    const accentCol = new THREE.Color(accentColor);
+    const clearcoat = rimRoughness < 0.20 ? 1.0 : rimRoughness < 0.45 ? 0.55 : 0.10;
+    const metallic  = rimRoughness < 0.45 ? 0.94 : 0.65;
+    const roughness = Math.max(rimRoughness, 0.06);
 
-  return shape;
-}
+    cloned.traverse((obj) => {
+      if (!(obj instanceof THREE.Mesh)) return;
+      const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+      mats.forEach((mat) => {
+        if (!mat) return;
+        const m = mat as THREE.MeshStandardMaterial;
+        const n = m.name || "";
 
-function parseSize(sizeStr: string): { width: number; aspect: number; rim: number } {
-  const m = sizeStr.match(/(\d+)\/(\d+)\s*R(\d+)/);
-  return m
-    ? { width: parseInt(m[1]), aspect: parseInt(m[2]), rim: parseInt(m[3]) }
-    : { width: 245, aspect: 45, rim: 18 };
-}
-
-function getSizeScale(sizeStr: string) {
-  const { aspect } = parseSize(sizeStr);
-  if (aspect <= 35) return { xy: 0.90, z: 1.06 };
-  if (aspect <= 42) return { xy: 0.95, z: 1.02 };
-  if (aspect <= 50) return { xy: 1.00, z: 1.00 };
-  if (aspect <= 60) return { xy: 1.08, z: 0.98 };
-  return { xy: 1.14, z: 0.95 };
-}
-
-function DraggableTyre({ accentColor, rimColor, rimRoughness, selectedSize = "245/45 R19" }: TyreProps) {
-  const groupRef = useRef<THREE.Group>(null!);
-  const isDragging = useRef(false);
-  const prevMouse = useRef({ x: 0, y: 0 });
-  const velocity = useRef({ x: 0, y: 0 });
-  const rot = useRef({ x: 0.32, y: 0.55 });
-  const { gl } = useThree();
-
-  const tyreProfile = useMemo(buildTyreProfile, []);
-
-  /* Extruded Y-split spoke — depth spans full rim barrel */
-  const spokeGeo = useMemo(() => {
-    const shape = buildSpokeShape();
-    return new THREE.ExtrudeGeometry(shape, {
-      depth: 0.920,
-      bevelEnabled: true,
-      bevelSize: 0.010,
-      bevelThickness: 0.008,
-      bevelSegments: 4,
+        if (n === "Spoke_Polished" || n === "Lip_Chrome") {
+          const pm = mat as THREE.MeshPhysicalMaterial;
+          pm.color.copy(rimCol);
+          pm.roughness  = roughness;
+          pm.metalness  = metallic;
+          pm.clearcoat  = clearcoat;
+          pm.needsUpdate = true;
+        }
+        if (n === "Cap_Chrome") {
+          const pm = mat as THREE.MeshPhysicalMaterial;
+          pm.color.set(rimRoughness < 0.35 ? "#C8CCD8" : rimColor);
+          pm.needsUpdate = true;
+        }
+      });
     });
-  }, []);
+  }, [cloned, rimColor, rimRoughness, accentColor]);
 
-  const spokeAngles = useMemo(() =>
-    Array.from({ length: 5 }, (_, i) => (i / 5) * Math.PI * 2), []);
-  const lugAngles = useMemo(() =>
-    Array.from({ length: 5 }, (_, i) => (i / 5) * Math.PI * 2), []);
+  return <primitive object={cloned} />;
+}
 
-  /*
-   * Per-rim-preset material values:
-   *   material-2 (end cap = the front face toward the camera) → polished/machined
-   *   material-0 (side walls)                                 → dark anodized
-   *   material-1 (start cap = inner back face)                → dark
-   */
-  const faceClearcoat  = rimRoughness < 0.20 ? 0.95 : rimRoughness < 0.45 ? 0.50 : 0.08;
-  const faceMetalness  = rimRoughness < 0.45 ? 0.94 : 0.62;
-  const faceRoughness  = Math.max(rimRoughness, 0.10);
+function DraggableWheel({ accentColor, rimColor, rimRoughness, selectedSize = "245/45 R19" }: TyreProps) {
+  const groupRef   = useRef<THREE.Group>(null!);
+  const isDragging = useRef(false);
+  const prevMouse  = useRef({ x: 0, y: 0 });
+  const velocity   = useRef({ x: 0, y: 0 });
+  const rot        = useRef({ x: 0.32, y: 0.55 });
+  const { gl }     = useThree();
+  const scale      = getSizeScale(selectedSize);
 
-  /* Drag interaction */
   useEffect(() => {
     const canvas = gl.domElement;
     const down = (e: PointerEvent) => {
@@ -170,206 +118,31 @@ function DraggableTyre({ accentColor, rimColor, rimRoughness, selectedSize = "24
     groupRef.current.rotation.z = 0;
   });
 
-  const sz = getSizeScale(selectedSize);
-  const cylRot: [number, number, number] = [Math.PI / 2, 0, 0];
-  const HALF_DEPTH = 0.460;
-
   return (
-    <group ref={groupRef} scale={[sz.xy * 0.80, sz.xy * 0.80, sz.z * 0.80]}>
-
-      {/* ── Tyre rubber ── */}
-      <mesh rotation={cylRot}>
-        <latheGeometry args={[tyreProfile, 96]} />
-        <meshStandardMaterial color="#090910" roughness={0.94} metalness={0.0} emissive="#030306" emissiveIntensity={0.06} />
-      </mesh>
-
-      {/* Circumferential tread grooves */}
-      {([-0.34, -0.17, 0.00, 0.17, 0.34] as number[]).map((z, i) => (
-        <mesh key={`groove-${i}`} position={[0, 0, z]}>
-          <torusGeometry args={[1.468, 0.040, 10, 96]} />
-          <meshStandardMaterial color="#030305" roughness={1.0} metalness={0} />
-        </mesh>
-      ))}
-
-      {/* Shoulder grooves */}
-      {([-0.42, 0.42] as number[]).map((z, i) => (
-        <mesh key={`sg-${i}`} position={[0, 0, z]}>
-          <torusGeometry args={[1.410, 0.028, 8, 80]} />
-          <meshStandardMaterial color="#030305" roughness={1.0} metalness={0} />
-        </mesh>
-      ))}
-
-      {/* Sidewall raised text ridge (simulated) */}
-      {([0.470, -0.470] as number[]).map((z, i) => (
-        <mesh key={`ridge-${i}`} position={[0, 0, z]}>
-          <torusGeometry args={[1.075, 0.008, 6, 96]} />
-          <meshStandardMaterial color="#111116" roughness={0.9} metalness={0} />
-        </mesh>
-      ))}
-
-      {/* Sidewall accent rings */}
-      {([0.480, -0.480] as number[]).map((z, i) => (
-        <mesh key={`sw-${i}`} position={[0, 0, z]}>
-          <torusGeometry args={[1.022, 0.018, 14, 96]} />
-          <meshStandardMaterial color={accentColor} roughness={0.38} metalness={0.28} emissive={accentColor} emissiveIntensity={0.45} />
-        </mesh>
-      ))}
-
-      {/* ── Rim barrel (dark inner tube) ── */}
-      <mesh rotation={cylRot}>
-        <cylinderGeometry args={[0.945, 0.945, 0.930, 72, 1, true]} />
-        <meshStandardMaterial color="#0E0E14" roughness={0.22} metalness={0.88} side={THREE.DoubleSide} />
-      </mesh>
-
-      {/* Outer rim barrel lip — wide polished chrome ring (the prominent outer ring in ref photo) */}
-      {([0.468, -0.468] as number[]).map((z, i) => (
-        <mesh key={`lip-${i}`} position={[0, 0, z]} rotation={cylRot}>
-          <cylinderGeometry args={[0.968, 0.960, 0.048, 72]} />
-          <meshPhysicalMaterial
-            color={rimRoughness < 0.50 ? "#D2D8E6" : rimColor}
-            roughness={Math.max(rimRoughness * 0.45, 0.08)}
-            metalness={0.96}
-            clearcoat={0.95}
-            clearcoatRoughness={0.06}
-            reflectivity={0.95}
-          />
-        </mesh>
-      ))}
-
-      {/* Barrel inner step ring (the bead seat step) */}
-      {([0.430, -0.430] as number[]).map((z, i) => (
-        <mesh key={`step-${i}`} position={[0, 0, z]} rotation={cylRot}>
-          <cylinderGeometry args={[0.920, 0.945, 0.018, 72]} />
-          <meshStandardMaterial color="#0E0E14" roughness={0.22} metalness={0.88} />
-        </mesh>
-      ))}
-
-      {/* Inner back wall disc */}
-      <mesh position={[0, 0, -0.428]} rotation={cylRot}>
-        <cylinderGeometry args={[0.920, 0.920, 0.010, 56]} />
-        <meshStandardMaterial color="#0A0A12" roughness={0.24} metalness={0.85} />
-      </mesh>
-
-      {/* ── 5 Y-split spokes ──
-           ExtrudeGeometry group indices:
-             0 = side walls (extruded walls)  → dark anodized
-             1 = start cap (inner back face)  → dark
-             2 = end cap (front face, camera side) → polished/machined
-           position={[0,0,-HALF_DEPTH]}: shape at z=-0.46, end cap at z=+0.46 ✓
-      */}
-      {spokeAngles.map((angle, i) => (
-        <mesh
-          key={`spoke-${i}`}
-          rotation={[0, 0, angle]}
-          position={[0, 0, -HALF_DEPTH]}
-          geometry={spokeGeo}
-        >
-          {/* Side walls — dark anodized/painted */}
-          <meshPhysicalMaterial attach="material-0"
-            color="#0C0C14" roughness={0.22} metalness={0.88}
-          />
-          {/* Inner back face — dark */}
-          <meshPhysicalMaterial attach="material-1"
-            color="#0A0A12" roughness={0.28} metalness={0.80}
-          />
-          {/* Front machined face — polished, matches rim color preset */}
-          <meshPhysicalMaterial attach="material-2"
-            color={rimColor}
-            roughness={faceRoughness}
-            metalness={faceMetalness}
-            clearcoat={faceClearcoat}
-            clearcoatRoughness={0.09}
-            reflectivity={0.92}
-          />
-        </mesh>
-      ))}
-
-      {/* ── Hub cylinder ── */}
-      <mesh rotation={cylRot}>
-        <cylinderGeometry args={[0.198, 0.198, 1.010, 40]} />
-        <meshStandardMaterial color="#0E0E14" roughness={0.22} metalness={0.88} />
-      </mesh>
-
-      {/* Hub cap (dark badge area) */}
-      {([0.510, -0.510] as number[]).map((z, i) => (
-        <mesh key={`hubcap-${i}`} position={[0, 0, z]} rotation={cylRot}>
-          <cylinderGeometry args={[0.178, 0.178, 0.028, 32]} />
-          <meshStandardMaterial color="#0A0A10" roughness={0.30} metalness={0.85} />
-        </mesh>
-      ))}
-
-      {/* Hub cap accent ring */}
-      {([0.514, -0.514] as number[]).map((z, i) => (
-        <mesh key={`hubring-${i}`} position={[0, 0, z]}>
-          <torusGeometry args={[0.168, 0.010, 8, 32]} />
-          <meshStandardMaterial color={accentColor} roughness={0.35} metalness={0.40} emissive={accentColor} emissiveIntensity={0.50} />
-        </mesh>
-      ))}
-
-      {/* ── Lug bolts — 5 bolts on PCD circle ── */}
-      {lugAngles.map((a, i) => {
-        const lx = Math.cos(a) * 0.650;
-        const ly = Math.sin(a) * 0.650;
-        return ([0.508, -0.508] as number[]).map((z, j) => (
-          <group key={`luggroup-${i}-${j}`} position={[lx, ly, z]}>
-            {/* Bolt shank */}
-            <mesh rotation={cylRot}>
-              <cylinderGeometry args={[0.052, 0.052, 0.062, 10]} />
-              <meshPhysicalMaterial color="#C8CCD8" roughness={0.18} metalness={0.92} clearcoat={0.7} clearcoatRoughness={0.12} />
-            </mesh>
-            {/* Bolt hex head face */}
-            <mesh position={[0, 0, j === 0 ? 0.032 : -0.032]} rotation={cylRot}>
-              <cylinderGeometry args={[0.046, 0.046, 0.010, 6]} />
-              <meshPhysicalMaterial color="#B8BCC8" roughness={0.15} metalness={0.95} clearcoat={0.8} clearcoatRoughness={0.10} />
-            </mesh>
-          </group>
-        ));
-      })}
-
-      {/* Ground shadow */}
-      <mesh position={[0, -1.65, -0.2]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[3.2, 1.8]} />
-        <meshBasicMaterial color="#000000" transparent opacity={0.08} />
-      </mesh>
-
+    <group ref={groupRef} scale={[scale, scale, scale]}>
+      <WheelGLB rimColor={rimColor} rimRoughness={rimRoughness} accentColor={accentColor} />
     </group>
   );
 }
 
-interface Props {
-  accentColor: string;
-  rimColor: string;
-  rimRoughness: number;
-  selectedSize?: string;
-}
-
-export default function ConfiguratorScene({ accentColor, rimColor, rimRoughness, selectedSize }: Props) {
+export default function ConfiguratorScene({ accentColor, rimColor, rimRoughness, selectedSize }: TyreProps) {
   return (
     <Canvas
-      camera={{ position: [0, 0, 6.5], fov: 34 }}
+      camera={{ position: [0, 0, 1.8], fov: 34 }}
       gl={{ antialias: true, alpha: true }}
       style={{ width: "100%", height: "100%", background: "transparent" }}
       onCreated={({ gl }) => { gl.setClearColor(0x000000, 0); }}
     >
-      <ambientLight intensity={0.24} color="#eef0ff" />
-      {/* Key light — high right front, creates strong highlights on the machined face */}
-      <directionalLight position={[5, 8, 6]}   intensity={4.0} color="#ffffff" />
-      {/* Soft fill from left */}
-      <directionalLight position={[-5, 2, 4]}  intensity={0.70} color="#d4e0ff" />
-      {/* Under-bounce */}
-      <directionalLight position={[0, -5, 3]}  intensity={0.28} color="#c8d4ff" />
-      {/* Accent back glow */}
-      <pointLight position={[0, 0, -7]}   intensity={3.5} color={accentColor} distance={18} />
-      {/* Side rim-light for depth */}
-      <pointLight position={[-7, 1, 0]}   intensity={2.0} color="#b8ccff" distance={16} />
-      <pointLight position={[7, 1, 0]}    intensity={1.6} color="#ffffff"  distance={16} />
-      {/* Front key point — catches the spoke faces */}
-      <pointLight position={[2, 4, 7]}    intensity={2.0} color="#ffffff"  distance={16} />
-
-      {/* IBL for realistic metal reflections */}
+      <ambientLight intensity={0.30} color="#eef0ff" />
+      <directionalLight position={[3, 6, 4]}  intensity={3.5} color="#ffffff" />
+      <directionalLight position={[-3, 2, 3]} intensity={0.60} color="#d4e0ff" />
+      <directionalLight position={[0, -4, 2]} intensity={0.25} color="#c8d4ff" />
+      <pointLight position={[0, 0, -5]}  intensity={2.5} color={accentColor} distance={12} />
+      <pointLight position={[-5, 1, 0]}  intensity={1.5} color="#b8ccff"     distance={10} />
+      <pointLight position={[5, 1, 0]}   intensity={1.2} color="#ffffff"     distance={10} />
+      <pointLight position={[1, 3, 5]}   intensity={1.8} color="#ffffff"     distance={10} />
       <Environment preset="studio" background={false} />
-
-      <DraggableTyre
+      <DraggableWheel
         accentColor={accentColor}
         rimColor={rimColor}
         rimRoughness={rimRoughness}
@@ -378,3 +151,5 @@ export default function ConfiguratorScene({ accentColor, rimColor, rimRoughness,
     </Canvas>
   );
 }
+
+useGLTF.preload("/models/wheel.glb");
