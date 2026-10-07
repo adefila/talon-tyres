@@ -61,8 +61,8 @@ export default function TyreShowcase() {
     setActiveIndex(idx);
   });
 
-  /* ── Tyre: moves from far LEFT to far RIGHT across the full scroll ── */
-  const tyreX = useTransform(scrollYProgress, [0, 1], ["-42%", "42%"]);
+  /* ── Tyre: moves left→right; smaller range so it stays on-screen on mobile ── */
+  const tyreX = useTransform(scrollYProgress, [0, 1], ["-22%", "22%"]);
   /* Subtle vertical parallax — floats up as it travels */
   const tyreY = useTransform(scrollYProgress, [0, 0.5, 1], ["4%", "-3%", "4%"]);
   /* Slight scale pulse: larger when centred */
@@ -149,8 +149,15 @@ export default function TyreShowcase() {
           </AnimatePresence>
         </motion.div>
 
-        {/* ── Layer 4: Feature text — opposite side from tyre ── */}
-        <div className="absolute inset-0 z-20 pointer-events-none flex items-center">
+        {/* Mobile gradient: darkens the bottom so text is legible over the 3D wheel */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-[55%] lg:hidden pointer-events-none z-15"
+          style={{ background: "linear-gradient(to top, #07070f 0%, #07070f88 55%, transparent 100%)" }}
+          aria-hidden="true"
+        />
+
+        {/* ── Layer 4: Feature text — bottom on mobile, opposite side on desktop ── */}
+        <div className="absolute inset-0 z-20 pointer-events-none flex items-end lg:items-center pb-20 lg:pb-0">
           <div className="max-w-[1400px] mx-auto px-8 lg:px-16 w-full">
             <AnimatePresence mode="wait">
               <motion.div
@@ -159,8 +166,8 @@ export default function TyreShowcase() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.55, ease }}
-                className={`max-w-[420px] ${
-                  active.textSide === "right" ? "ml-auto" : "mr-auto"
+                className={`max-w-[420px] mx-auto lg:mx-0 ${
+                  active.textSide === "right" ? "lg:ml-auto" : "lg:mr-auto"
                 }`}
               >
                 {/* Step indicator */}
@@ -184,7 +191,7 @@ export default function TyreShowcase() {
                   {active.num} / {active.title}
                 </span>
 
-                <h2 className="text-[44px] lg:text-[58px] font-bold uppercase leading-[1.0] tracking-[-0.03em] text-white mb-5">
+                <h2 className="text-[36px] lg:text-[58px] font-bold uppercase leading-[1.0] tracking-[-0.03em] text-white mb-5">
                   {active.headline.map((line, i) => (
                     <span key={i} className="block">{line}</span>
                   ))}

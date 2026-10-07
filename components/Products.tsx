@@ -183,7 +183,7 @@ export default function Products() {
 
                 <a
                   href="#configure"
-                  className="inline-flex items-center text-white text-[10px] font-bold tracking-[0.18em] uppercase px-5 py-3 transition-opacity duration-200 hover:opacity-85"
+                  className="btn-accent inline-flex items-center text-white text-[10px] font-bold tracking-[0.18em] uppercase px-5 py-3 transition-[filter] duration-200"
                   style={{ background: p.accentColor, transform: "skewX(-6deg)" }}
                 >
                   <span style={{ display: "inline-flex", alignItems: "center", gap: "7px", transform: "skewX(6deg)" }}>

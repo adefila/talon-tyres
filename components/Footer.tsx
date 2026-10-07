@@ -2,27 +2,27 @@
 
 import TalonLogo from "./TalonLogo";
 
-const footerLinks = {
+const footerLinks: Record<string, { label: string; href: string }[]> = {
   Products: [
-    "Performance Tyres",
-    "All-Season Tyres",
-    "Off-Road Tyres",
-    "Winter Tyres",
-    "Commercial Fleet",
+    { label: "Performance Tyres",  href: "#products" },
+    { label: "All-Season Tyres",   href: "#products" },
+    { label: "Off-Road Tyres",     href: "#products" },
+    { label: "Winter Tyres",       href: "#products" },
+    { label: "Configure Your Set", href: "#configure" },
   ],
   Company: [
-    "About TALON",
-    "Engineering Lab",
-    "Careers",
-    "Press & Media",
-    "Sustainability",
+    { label: "About TALON",    href: "#about" },
+    { label: "Technology",     href: "#about" },
+    { label: "Blog",           href: "#blog" },
+    { label: "Press & Media",  href: "#" },
+    { label: "Sustainability", href: "#" },
   ],
   Support: [
-    "Find a Dealer",
-    "Tyre Size Guide",
-    "Warranty Policy",
-    "FAQ",
-    "Contact Us",
+    { label: "FAQ",          href: "#faq" },
+    { label: "Contact Us",   href: "#contact" },
+    { label: "Tyre Guide",   href: "#blog" },
+    { label: "Configurator", href: "#configure" },
+    { label: "Find a Dealer",href: "#contact" },
   ],
 };
 
@@ -105,12 +105,12 @@ export default function Footer() {
               </h4>
               <ul className="space-y-3">
                 {links.map((link) => (
-                  <li key={link}>
+                  <li key={link.label}>
                     <a
-                      href="#"
+                      href={link.href}
                       className="text-[15px] text-white/50 hover:text-white transition-colors"
                     >
-                      {link}
+                      {link.label}
                     </a>
                   </li>
                 ))}

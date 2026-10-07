@@ -242,7 +242,7 @@ export default function TyreConfigurator() {
             </div>
 
             {/* 3D Canvas */}
-            <div className="relative flex-1 min-h-[380px] bg-white">
+            <div className="relative flex-1 min-h-[260px] sm:min-h-[380px] bg-white">
               <ConfiguratorScene
                 accentColor={tyre.accentColor}
                 rimColor={rim.color}

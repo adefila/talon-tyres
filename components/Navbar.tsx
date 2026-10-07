@@ -37,6 +37,8 @@ const navLinks = [
   { label: "Products", href: "#products", hasMega: true },
   { label: "Configure", href: "#configure" },
   { label: "Technology", href: "#about" },
+  { label: "Blog", href: "#blog" },
+  { label: "FAQ", href: "#faq" },
   { label: "Contact", href: "#contact" },
 ];
 

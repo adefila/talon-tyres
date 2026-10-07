@@ -42,3 +42,13 @@ body {
   background: var(--red);
   color: white;
 }
+
+a,
+button,
+[role="button"] {
+  cursor: pointer;
+}
+
+.btn-accent:hover {
+  filter: brightness(0.85);
+}

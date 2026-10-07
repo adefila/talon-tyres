@@ -100,7 +100,7 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 0.05, ease }}
             className="flex items-center gap-4 mb-10"
           >
-            <span className="bg-[#CC0000] text-white text-[10px] font-bold tracking-[0.22em] uppercase px-3.5 py-1.5">
+            <span className="bg-[#CC0000] text-white text-[10px] font-bold tracking-[0.22em] uppercase px-3.5 py-1.5 whitespace-nowrap shrink-0">
               New Arrival
             </span>
             <span className="w-px h-4 bg-white/20" />
@@ -125,7 +125,7 @@ export default function Hero() {
             <motion.div variants={fadeUp} className="flex items-start gap-5 max-w-[480px]">
               <div className="w-px h-16 bg-[#CC0000] shrink-0 mt-0.5" />
               <p className="text-[17px] text-white/70 leading-relaxed">
-                We don&apos;t just sell tires. We deliver control, safety, and power at every turn. Your tires are more than rubber on the road. They&apos;re the foundation of your journey.
+                Track-grade compounds. Reinforced sidewalls. Nano-grip technology. Built for the conditions you actually drive in — not a lab test.
               </p>
             </motion.div>
 
