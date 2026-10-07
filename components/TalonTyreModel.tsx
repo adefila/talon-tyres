@@ -19,8 +19,8 @@ export interface TalonTyreModelProps {
   talon-tyre.glb (built in Blender — source: scripts/talon-tyre.blend)
   TalonWheel
   ├─ Tyre  : Tyre_Body, Tyre_Tread, Sidewall_Text, Sidewall_Accent
-  ├─ Rim   : Rim_Barrel, Rim_Lip, Spoke_Face, Hub, Hub_Cap, Lug_Nuts
-  └─ Brake : Brake_Disc, Caliper_accent
+  └─ Rim   : Rim_Barrel, Rim_Lip, Spoke_Face, Hub, Hub_Cap, Lug_Nuts
+  The rim is open at the back like a real alloy (no brake hardware).
   The wheel face points toward +Z and the axle runs along Z.
 */
 export default function TalonTyreModel({
@@ -48,14 +48,15 @@ export default function TalonTyreModel({
     return clone;
   }, [scene]);
 
-  const parts = useMemo(
-    () => ({
-      wheel: model.getObjectByName("TalonWheel") ?? model,
-      rim: model.getObjectByName("Rim"),
-      brake: model.getObjectByName("Brake"),
-    }),
-    [model]
-  );
+  /* Named groups we animate (kept in refs so useFrame can move them) */
+  const wheelRef = useRef<THREE.Object3D | null>(null);
+  const rimRef = useRef<THREE.Object3D | null>(null);
+  const tyreRef = useRef<THREE.Object3D | null>(null);
+  useEffect(() => {
+    wheelRef.current = model.getObjectByName("TalonWheel") ?? model;
+    rimRef.current = model.getObjectByName("Rim") ?? null;
+    tyreRef.current = model.getObjectByName("Tyre") ?? null;
+  }, [model]);
 
   /* Live colours */
   useEffect(() => {
@@ -80,12 +81,12 @@ export default function TalonTyreModel({
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
-    if (spinning) parts.wheel.rotation.z -= dt * 1.6;
+    if (spinning && wheelRef.current) wheelRef.current.rotation.z -= dt * 1.6;
 
     /* Ease the exploded view in/out */
     explode.current = THREE.MathUtils.damp(explode.current, exploded ? 1 : 0, 6, dt);
-    if (parts.rim) parts.rim.position.z = explode.current * 0.22;
-    if (parts.brake) parts.brake.position.z = explode.current * -0.2;
+    if (rimRef.current) rimRef.current.position.z = explode.current * 0.16;
+    if (tyreRef.current) tyreRef.current.position.z = explode.current * -0.1;
   });
 
   return <primitive object={model} />;

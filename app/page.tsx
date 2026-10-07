@@ -6,7 +6,6 @@ import Products from "@/components/Products";
 import TyreShowcase from "@/components/TyreShowcase";
 import Technology from "@/components/Technology";
 import TyreViewer from "@/components/TyreViewer";
-import TyreConfigurator from "@/components/TyreConfigurator";
 import Reviews from "@/components/Reviews";
 import PressLogos from "@/components/PressLogos";
 import Blog from "@/components/Blog";
@@ -25,7 +24,6 @@ export default function Home() {
       <TyreShowcase />
       <Technology />
       <TyreViewer />
-      <TyreConfigurator />
       <Reviews />
       <PressLogos />
       <Blog />

@@ -9,11 +9,13 @@ import TalonTyreModel, { type TalonTyreModelProps } from "./TalonTyreModel";
 interface Props extends TalonTyreModelProps {
   /** Increment to snap the camera back to the default angle */
   resetKey: number;
+  /** Overall model scale (taller sidewalls render slightly bigger) */
+  scale?: number;
 }
 
 const DEFAULT_CAMERA: [number, number, number] = [0.74, 0.17, 1.22];
 
-export default function TyreViewerScene({ resetKey, ...model }: Props) {
+export default function TyreViewerScene({ resetKey, scale = 1, ...model }: Props) {
   const controls = useRef<OrbitControlsImpl>(null);
 
   useEffect(() => {
@@ -33,7 +35,9 @@ export default function TyreViewerScene({ resetKey, ...model }: Props) {
       <directionalLight position={[-2.5, 1, -2]} intensity={0.8} color="#c8d4ff" />
 
       <Suspense fallback={null}>
-        <TalonTyreModel {...model} />
+        <group scale={scale}>
+          <TalonTyreModel {...model} />
+        </group>
         <Environment preset="studio" background={false} />
       </Suspense>
 
