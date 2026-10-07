@@ -2,35 +2,17 @@
 
 export default function HeroCarAnimation() {
   const FWX = 648, WY = 368;   // front wheel center
-  const RWX = 202, WR = 66, RI = 43; // rear wheel, tyre radius, rim radius
+  const RWX = 202, WR = 66;          // rear wheel, tyre radius
 
-  function spokes(cx: number, cy: number) {
-    return [0, 72, 144, 216, 288].map((deg) => {
-      const a = (deg * Math.PI) / 180;
-      return {
-        x1: cx + Math.cos(a) * RI * 0.22, y1: cy + Math.sin(a) * RI * 0.22,
-        x2: cx + Math.cos(a) * RI * 0.87, y2: cy + Math.sin(a) * RI * 0.87,
-      };
-    });
-  }
-
-  const Wheel = ({ cx }: { cx: number }) => (
-    <g>
-      {/* Outer tyre */}
-      <circle cx={cx} cy={WY} r={WR} fill="#0e0e18" />
-      <circle cx={cx} cy={WY} r={WR} fill="none" stroke="#1c1c28" strokeWidth="13" />
-      {/* Red sidewall accent ring */}
-      <circle cx={cx} cy={WY} r={WR * 0.665} fill="none" stroke="#CC0000" strokeWidth="2.2" opacity="0.9" />
-      {/* Spinning rim + spokes */}
-      <g className="hca-spin" style={{ transformOrigin: `${cx}px ${WY}px` } as never}>
-        <circle cx={cx} cy={WY} r={RI} fill="#252538" />
-        {spokes(cx, WY).map((s, i) => (
-          <line key={i} x1={s.x1} y1={s.y1} x2={s.x2} y2={s.y2}
-            stroke="#c0cce0" strokeWidth="5.5" strokeLinecap="round" />
-        ))}
-        <circle cx={cx} cy={WY} r={RI * 0.22} fill="#CC0000" />
-        <circle cx={cx} cy={WY} r={RI * 0.1} fill="#fff" opacity="0.82" />
-      </g>
+  /* Face-on render of the Blender-built Talon tyre, spun with CSS */
+  const wheel = (cx: number) => (
+    <g key={cx}>
+      <image
+        href="/images/tyres/talon-tyre-red.webp"
+        x={cx - WR} y={WY - WR} width={WR * 2} height={WR * 2}
+        className="hca-spin"
+        style={{ transformOrigin: `${cx}px ${WY}px` } as never}
+      />
       {/* Glare */}
       <ellipse cx={cx - WR * 0.32} cy={WY - WR * 0.56} rx={WR * 0.15} ry={WR * 0.065}
         fill="white" opacity="0.055"
@@ -153,8 +135,8 @@ export default function HeroCarAnimation() {
             fontWeight="900" fill="#CC0000" letterSpacing="4" opacity="0.88">TALON</text>
 
           {/* WHEELS */}
-          <Wheel cx={FWX} />
-          <Wheel cx={RWX} />
+          {wheel(FWX)}
+          {wheel(RWX)}
 
           {/* Wheel arch masks */}
           <path d={archPath(FWX)} fill="none" stroke="#0c0d1c" strokeWidth="20" />
