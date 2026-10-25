@@ -72,7 +72,7 @@ export default function Products() {
             transition={{ duration: 0.6, ease }}
           >
             <span className="text-[10px] font-semibold tracking-[0.28em] uppercase text-[#CC0000] mb-3 block">
-              Our Collection
+              Our Collections
             </span>
             <h2 className="text-[44px] lg:text-[56px] font-bold uppercase leading-[1] tracking-[-0.02em] text-[#0A0A14]">
               Built for
