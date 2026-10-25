@@ -93,7 +93,7 @@ export default function Reviews() {
             className="flex items-center gap-8"
           >
             <div>
-              <div className="text-[38px] font-bold text-[#0A0A14] leading-none tracking-tight">4.9</div>
+              <div className="text-[38px] font-bold text-[#0A0A14] leading-none tracking-tight">4.8</div>
               <div className="text-[10px] tracking-[0.2em] uppercase text-[#9CA3AF] font-medium mt-1.5">Overall Rating</div>
               <div className="flex gap-0.5 mt-1.5">
                 {Array.from({ length: 5 }).map((_, i) => (
