@@ -125,7 +125,7 @@ export default function Hero() {
             <motion.div variants={fadeUp} className="flex items-start gap-5 max-w-[480px]">
               <div className="w-px h-16 bg-[#CC0000] shrink-0 mt-0.5" />
               <p className="text-[17px] text-white/70 leading-relaxed">
-                Track-grade compounds. Reinforced sidewalls. Nano-grip technology. Built for the conditions you actually drive in — not a lab test.
+                Track-grade compounds. Reinforced sidewalls. Advanced nano-grip technology. Engineered for real-world roads, real driving conditions, and performance beyond the lab.
               </p>
             </motion.div>
 
